@@ -1,0 +1,16 @@
+{
+   "compilerOptions": {
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "baseUrl": "app",
+      "outDir": "dist",
+      "sourceMap": true,
+      "noImplicitAny": true
+   },
+   "include": ["app/**/*"],
+   "exclude": [
+      "./plugins/**/*",
+      "./typings/**/*",
+      "./dist/**/*" // This is what fixed it!
+   ]
+}
