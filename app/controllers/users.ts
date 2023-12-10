@@ -1,15 +1,18 @@
-import express from 'express';
+import express, { ErrorRequestHandler, NextFunction } from "express";
 
-import { deleteUserById, getUsers, getUserById } from '../models/users';
+import { deleteUserById, getUsers, getUserById } from "../models/users";
+import ErrorHandler from "../utils/Error.utils";
+import logger from "../utils/Logger.utils";
 
-export const getAllUsers = async (req: express.Request, res: express.Response) => {
+export const getAllUsers = async (err: ErrorRequestHandler, req: express.Request, res: express.Response, next: NextFunction) => {
    try {
       const users = await getUsers();
-
-      return res.status(200).json(users);
+      console.log(users);
+      return res.json(users);
    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
+      logger.info(error);
+      // return res.json({ message: "error cuy" });
+      return ErrorHandler(400, "Get users failed", res);
    }
 };
 
