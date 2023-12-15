@@ -28,9 +28,6 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-authJwtMiddleware(passport);
-app.use(passport.initialize());
-
 app.use(errorMiddleware);
 
 app.use("/", router());

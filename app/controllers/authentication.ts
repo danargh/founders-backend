@@ -2,7 +2,7 @@ import express from "express";
 
 import { getUserByEmail, createUser, UserModel } from "../models/users";
 import ErrorHandler from "../utils/Error.utils";
-import jwt from "jwt-simple";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import logger from "../utils/Logger.utils";
 import bcrypt from "bcrypt";
@@ -19,7 +19,6 @@ export const login = async (req: express.Request, res: express.Response) => {
          return ErrorHandler(401, "Unauthorized", res);
       }
 
-      console.log(user);
       const isMatch = await bcrypt.compare(req.body.password, user.password);
       if (!isMatch) {
          return ErrorHandler(401, "Unauthorized", res);
@@ -27,18 +26,19 @@ export const login = async (req: express.Request, res: express.Response) => {
 
       const payload = {
          id: user._id,
-         expire: Date.now() + 1000 * 60 * 60 * 24 * 7,
+         username: user.username,
       };
+      const expiresIn = 1000 * 60 * 60 * 2;
 
-      const token = jwt.encode(payload, config.JWT_SECRET);
+      const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: expiresIn });
 
       logger.info("Login successful");
       return res.status(200).json({
          status: "Success",
          code: 200,
          message: "Login successful",
-         data: user,
-         token: token,
+         data: { email: user.email, username: user.username, createdAt: user.createdAt },
+         auth: { token: token, expiresIn: new Date(expiresIn) },
       });
    } catch (error) {
       console.error(error);
@@ -68,7 +68,10 @@ export const register = async (req: express.Request, res: express.Response) => {
          return ErrorHandler(500, "Register failed", res);
       } else {
          logger.info("Register successfull");
-         return res.status(201).json({ status: "Success", code: 201, message: "Register successfull", data: createdUser }).end();
+         return res
+            .status(201)
+            .json({ status: "Success", code: 201, message: "Register successfull", data: { email: createdUser.email, username: createdUser.username, createdAt: createdUser.createdAt } })
+            .end();
       }
    } catch (error) {
       console.log(error);

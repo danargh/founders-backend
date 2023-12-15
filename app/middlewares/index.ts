@@ -3,58 +3,32 @@ import { merge, get } from "lodash";
 import ErrorHandler from "../utils/Error.utils";
 import { UserModel, getUserById, getUserBySessionToken } from "../models/users";
 import config from "../config";
-import passportJWT from "passport-jwt";
-import logger from "../utils/Logger.utils";
+import jwt from "jsonwebtoken";
+import { UserData, ValidationRequest } from "./interface";
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const JWTStrategy = passportJWT.Strategy;
-
-export const authJwtMiddleware = (passport: any) => {
-   const params = {
-      secretOrKey: config.JWT_SECRET,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-   };
-
-   const strategy = new JWTStrategy(params, async (jwtPayload, done) => {
-      try {
-         const user = await UserModel.findById(jwtPayload.id);
-         if (!user) {
-            return done(null, false);
-         }
-
-         // if (jwtPayload.expire <= Date.now()) {
-         //    return done(null, false);
-         // }
-
-         return done(null, user);
-      } catch (error) {
-         logger.error(error);
-         return done(error, false);
-      }
-   });
-
-   passport.use(strategy);
-};
-
-export const errorMiddleware = (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-   if (!err) {
-      next();
-      return;
+export const authJwtMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+   const ValidationRequest = req as ValidationRequest;
+   const { authorization } = ValidationRequest.headers;
+   if (!authorization) {
+      return ErrorHandler(401, "Unauthorized", res);
    }
-   ErrorHandler(err.status, err.message, res);
+
+   const token = authorization.replace("Bearer ", "");
+   if (!token) {
+      return ErrorHandler(401, "Unauthorized", res);
+   }
+   const secret = config.JWT_SECRET;
+
+   try {
+      const jwtDecode = jwt.verify(token, secret) as UserData;
+      ValidationRequest.userData = jwtDecode;
+      next();
+   } catch (error) {
+      return ErrorHandler(401, "Unauthorized", res);
+   }
 };
 
-// export const isAuthenticated = async (err: any, user: any, info: any) => {
-//    if (err) {
-//       return err;
-//    }
-//    if (!user) {
-//       return new Error("Unauthorized");
-//    }
-//    return user;
-// }
-
-export const isOwner = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const authorization = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
    try {
       const { id } = req.params;
       const currentUserId = get(req, "identity._id") as string;
@@ -72,4 +46,12 @@ export const isOwner = async (req: express.Request, res: express.Response, next:
       console.log(error);
       return res.sendStatus(400);
    }
+};
+
+export const errorMiddleware = (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+   if (!err) {
+      next();
+      return;
+   }
+   ErrorHandler(err.status, err.message, res);
 };

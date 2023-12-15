@@ -1,17 +1,24 @@
-import express, { ErrorRequestHandler, NextFunction } from "express";
-
+import express from "express";
 import { deleteUserById, getUsers, getUserById } from "../models/users";
 import ErrorHandler from "../utils/Error.utils";
-import logger from "../utils/Logger.utils";
 
-export const getAllUsers = async (err: ErrorRequestHandler, req: express.Request, res: express.Response, next: NextFunction) => {
+export const getAllUsers = async (req: express.Request, res: express.Response) => {
    try {
       const users = await getUsers();
-      console.log(users);
-      return res.json(users);
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Get users successfull!",
+         data: users.map(
+            (user) =>
+               new Object({
+                  email: user.email,
+                  username: user.username,
+                  createdAt: user.createdAt,
+               })
+         ),
+      });
    } catch (error) {
-      logger.info(error);
-      // return res.json({ message: "error cuy" });
       return ErrorHandler(400, "Get users failed", res);
    }
 };
