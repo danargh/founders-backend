@@ -8,9 +8,11 @@ Features:
 - MongoDB & Mongoose connect, Database creation
 - Controllers creation
 - Middlewares creation
-- Cookie based authentication
-- Postman testing
+- JWT & Oauth based authentication
 - Create, Read, Update
+- Logging handler
+- Postman documentation
+- Testing?
 
 ### Start the app
 
