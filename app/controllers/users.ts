@@ -1,10 +1,11 @@
 import express from "express";
 import { deleteUserById, getUsers, getUserById } from "../models/users";
-import ErrorHandler from "../utils/Error.utils";
+import { getAllUsersService } from "../services/user";
+import { UserData } from "../interfaces/auth";
 
-export const getAllUsers = async (req: express.Request, res: express.Response) => {
+export const getAllUsers = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    try {
-      const users = await getUsers();
+      const { users } = await getAllUsersService(req.userData.id);
       return res.status(200).json({
          status: "Success",
          code: 200,
@@ -15,11 +16,12 @@ export const getAllUsers = async (req: express.Request, res: express.Response) =
                   email: user.email,
                   username: user.username,
                   createdAt: user.createdAt,
+                  role: user.role,
                })
          ),
       });
    } catch (error) {
-      return ErrorHandler(400, "Get users failed", res);
+      return next(error);
    }
 };
 

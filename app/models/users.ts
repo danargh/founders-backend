@@ -1,19 +1,18 @@
 import mongoose from "mongoose";
-import passportLocalMongoose from "passport-local-mongoose";
 
 // User Config
 const UserSchema = new mongoose.Schema({
    email: { type: String, required: true, unique: true },
    username: { type: String, required: true, unique: true },
    password: { type: String, required: true },
+   role: { type: String, required: true, default: "admin" },
    createdAt: { type: Date, default: Date.now },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
 
-// User Services
 export const getUsers = () => {
-   return UserModel.find();
+   return UserModel.find({ role: "user" });
 };
 export const getUserByEmail = (email: string) => {
    return UserModel.findOne({ email });

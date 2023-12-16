@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import config from "../config";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../models/users";
 
 export const encryptPassword = async (password: string): Promise<string> => {
    try {

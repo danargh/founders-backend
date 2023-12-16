@@ -1,14 +1,13 @@
-import express, { Handler } from "express";
-import { merge, get } from "lodash";
+import express from "express";
 import ErrorHandler from "../utils/Error.utils";
-import { UserModel, getUserById, getUserBySessionToken } from "../models/users";
 import config from "../config";
 import jwt from "jsonwebtoken";
-import { UserData, ValidationRequest } from "./interface";
+import { UserData } from "../interfaces/auth";
+import { ErrorException } from "../utils/Error.utils";
+import logger from "../utils/Logger.utils";
 
-export const authJwtMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-   const ValidationRequest = req as ValidationRequest;
-   const { authorization } = ValidationRequest.headers;
+export const authJwtMiddleware = (req: UserData, res: express.Response, next: express.NextFunction) => {
+   const { authorization } = req.headers;
    if (!authorization) {
       return ErrorHandler(401, "Unauthorized", res);
    }
@@ -17,41 +16,29 @@ export const authJwtMiddleware = (req: express.Request, res: express.Response, n
    if (!token) {
       return ErrorHandler(401, "Unauthorized", res);
    }
-   const secret = config.JWT_SECRET;
 
    try {
-      const jwtDecode = jwt.verify(token, secret) as UserData;
-      ValidationRequest.userData = jwtDecode;
-      next();
+      const secret = config.JWT_SECRET as string;
+      jwt.verify(token, secret, (err, decoded) => {
+         if (err) {
+            throw new ErrorException(401, "Unauthorized");
+         }
+         req.userData = decoded;
+         next();
+      });
    } catch (error) {
       return ErrorHandler(401, "Unauthorized", res);
    }
 };
 
-export const authorization = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const errorMiddleware = (err: ErrorException, req: express.Request, res: express.Response, next: express.NextFunction) => {
    try {
-      const { id } = req.params;
-      const currentUserId = get(req, "identity._id") as string;
+      const status: number = err.status || 500;
+      const message: string = err.message || "Something went wrong";
 
-      if (!currentUserId) {
-         return res.sendStatus(400);
-      }
-
-      if (currentUserId.toString() !== id) {
-         return res.sendStatus(403);
-      }
-
-      next();
+      logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
+      res.status(status).json({ status: "Failed", code: status, message: message }).end();
    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
+      next(error);
    }
-};
-
-export const errorMiddleware = (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-   if (!err) {
-      next();
-      return;
-   }
-   ErrorHandler(err.status, err.message, res);
 };

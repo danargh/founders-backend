@@ -1,0 +1,15 @@
+200 OK: Permintaan berhasil. Ini adalah respons standar untuk permintaan HTTP yang berhasil.
+
+201 Created: Permintaan berhasil dan menghasilkan sumber daya baru.
+
+204 No Content: Permintaan berhasil, tetapi tidak ada konten yang perlu dikirim kembali.
+
+400 Bad Request: Server tidak dapat memahami permintaan klien karena sintaks yang tidak valid.
+
+401 Unauthorized: Klien harus mengotentikasi diri untuk mendapatkan akses ke sumber daya.
+
+403 Forbidden: Klien tidak diizinkan mengakses sumber daya, meskipun klien sudah diotentikasi.
+
+404 Not Found: Sumber daya yang diminta tidak ditemukan di server.
+
+500 Internal Server Error: Terjadi kesalahan internal pada server yang mencegah server memenuhi permintaan.
