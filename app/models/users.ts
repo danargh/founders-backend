@@ -11,24 +11,21 @@ const UserSchema = new mongoose.Schema({
 
 export const UserModel = mongoose.model("User", UserSchema);
 
-export const getUsers = () => {
-   return UserModel.find({ role: "user" });
+export const getUsers = async () => {
+   return await UserModel.find({ role: "user" }).exec();
 };
-export const getUserByEmail = (email: string) => {
+export const getUserByEmail = async (email: string) => {
    return UserModel.findOne({ email });
 };
-export const getUserBySessionToken = (sessionToken: string) => {
-   return UserModel.findOne({ "authentication.sessionToken": sessionToken });
+export const getUserById = async (id: string) => {
+   return await UserModel.findById(id).exec();
 };
-export const getUserById = (id: string) => {
-   return UserModel.findById(id);
-};
-export const createUser = (values: Record<string, any>) => {
+export const createUser = async (values: Record<string, any>) => {
    return new UserModel(values).save().then((user: any) => user.toObject());
 };
-export const deleteUserById = (id: string) => {
-   return UserModel.findOneAndDelete({ _id: id });
+export const deleteUserById = async (id: string) => {
+   return await UserModel.findOneAndDelete({ _id: id }).exec();
 };
-export const updateUserById = (id: string, values: Record<string, any>) => {
-   return UserModel.findByIdAndUpdate(id, values);
+export const updateUserById = async (id: string, values: Record<string, any>) => {
+   return await UserModel.findByIdAndUpdate(id, values, { new: true }).exec();
 };

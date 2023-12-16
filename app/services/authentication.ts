@@ -20,6 +20,8 @@ export const loginService = async (req: express.Request) => {
    const payload = {
       id: user._id,
       username: user.username,
+      email: user.email,
+      role: user.role,
    };
    const expiresIn = 1000 * 60 * 60 * 2;
 

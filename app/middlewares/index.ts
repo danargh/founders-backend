@@ -2,7 +2,7 @@ import express from "express";
 import ErrorHandler from "../utils/Error.utils";
 import config from "../config";
 import jwt from "jsonwebtoken";
-import { UserData } from "../interfaces/auth";
+import { UserData } from "../interfaces";
 import { ErrorException } from "../utils/Error.utils";
 import logger from "../utils/Logger.utils";
 
@@ -21,7 +21,7 @@ export const authJwtMiddleware = (req: UserData, res: express.Response, next: ex
       const secret = config.JWT_SECRET as string;
       jwt.verify(token, secret, (err, decoded) => {
          if (err) {
-            throw new ErrorException(401, "Unauthorized");
+            throw new ErrorException(401, err.message);
          }
          req.userData = decoded;
          next();

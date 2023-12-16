@@ -1,11 +1,10 @@
-import express from "express";
-import { deleteUserById, getUsers, getUserById } from "../models/users";
-import { getAllUsersService } from "../services/user";
-import { UserData } from "../interfaces/auth";
+import express, { NextFunction } from "express";
+import { getAllUsersService, deleteUserService, updateUserService } from "../services/user";
+import { UserData } from "../interfaces";
 
 export const getAllUsers = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    try {
-      const { users } = await getAllUsersService(req.userData.id);
+      const { users } = await getAllUsersService(req.userData.role);
       return res.status(200).json({
          status: "Success",
          code: 200,
@@ -25,36 +24,43 @@ export const getAllUsers = async (req: UserData, res: express.Response, next: ex
    }
 };
 
-export const deleteUser = async (req: express.Request, res: express.Response) => {
+export const deleteUser = async (req: UserData, res: express.Response, next: NextFunction) => {
    try {
       const { id } = req.params;
-
-      const deletedUser = await deleteUserById(id);
-
-      return res.json(deletedUser);
+      const { deletedUser } = await deleteUserService(id, req.userData.id, req.userData.role);
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Delete user successfull!",
+         data: {
+            email: deletedUser.email,
+            username: deletedUser.username,
+            createdAt: deletedUser.createdAt,
+            role: deletedUser.role,
+         },
+      });
    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
+      return next(error);
    }
 };
 
-export const updateUser = async (req: express.Request, res: express.Response) => {
+export const updateUser = async (req: UserData, res: express.Response, next: NextFunction) => {
    try {
       const { id } = req.params;
-      const { username } = req.body;
+      const { updatedUser } = await updateUserService(id, req.userData.id, req.userData.role, req.body);
 
-      if (!username) {
-         return res.sendStatus(400);
-      }
-
-      const user = await getUserById(id);
-
-      user.username = username;
-      await user.save();
-
-      return res.status(200).json(user).end();
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Update user successfull!",
+         data: {
+            email: updatedUser.email,
+            username: updatedUser.username,
+            createdAt: updatedUser.createdAt,
+            role: updatedUser.role,
+         },
+      });
    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
+      next(error);
    }
 };
