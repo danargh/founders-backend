@@ -1,5 +1,5 @@
 import express, { NextFunction } from "express";
-import { loginService, registerService } from "../services/authentication";
+import { loginService, registerService, validateTokenService } from "../services/authentication";
 
 export const login = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
    try {
@@ -9,9 +9,14 @@ export const login = async (req: express.Request, res: express.Response, next: e
          status: "Success",
          code: 200,
          message: "Login successful",
-         data: { email: user.email, username: user.username, createdAt: user.createdAt },
-         auth: { token: token, expiresIn: new Date(expiresIn) },
-         role: user.role,
+         data: {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+            createdAt: user.createdAt,
+            auth: { token: token, expiresIn: new Date(new Date().getTime() + expiresIn * 1000) },
+            role: user.role,
+         },
       });
    } catch (error) {
       next(error);
@@ -31,6 +36,15 @@ export const register = async (req: express.Request, res: express.Response, next
             data: { email: createdUser.email, username: createdUser.username, createdAt: createdUser.createdAt, role: createdUser.role },
          })
          .end();
+   } catch (error) {
+      next(error);
+   }
+};
+
+export const validateToken = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      await validateTokenService(req);
+      return res.status(200).json({ status: "Success", code: 200, message: "Validate successfull" });
    } catch (error) {
       next(error);
    }

@@ -23,9 +23,9 @@ export const loginService = async (req: express.Request) => {
       email: user.email,
       role: user.role,
    };
-   const expiresIn = 1000 * 60 * 60 * 2;
+   const expiresIn = 7200;
 
-   const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: expiresIn });
+   const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: "2h" });
 
    return { user, token, expiresIn };
 };
@@ -43,4 +43,18 @@ export const registerService = async (req: express.Request) => {
    });
 
    return { createdUser };
+};
+
+export const validateTokenService = async (req: express.Request) => {
+   const token = req.headers.authorization?.replace("Bearer ", "");
+   if (!token) throw new ErrorException(401, "Unauthorized");
+
+   const secret = config.JWT_SECRET as string;
+   jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+         throw new ErrorException(401, err.message);
+      } else {
+         return decoded;
+      }
+   });
 };

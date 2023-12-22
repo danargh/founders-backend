@@ -7,6 +7,7 @@ import cors from "cors";
 import router from "./router";
 import { errorMiddleware } from "./middlewares";
 import connectToMongoDB from "./database/index";
+import config from "./config";
 
 const app = express();
 
@@ -35,6 +36,6 @@ app.use(errorMiddleware);
 
 // running server
 const server = http.createServer(app);
-server.listen(3000, () => {
-   console.log("Server running on http://localhost:3000/");
+server.listen(config.PORT, () => {
+   console.log("Server running on http://localhost:8080/");
 });

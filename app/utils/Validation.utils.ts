@@ -2,7 +2,6 @@ import Joi from "joi";
 import { ErrorException } from "./Error.utils";
 
 export const loginValidation = Joi.object({
-   username: Joi.string().required(),
    email: Joi.string().email().required(),
    password: Joi.string().required(),
 });
