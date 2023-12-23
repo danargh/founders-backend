@@ -5,5 +5,5 @@ export default (router: express.Router) => {
    router.get("/", (req, res) => res.send("Hello World!"));
    router.post("/auth/register", register);
    router.post("/auth/login", login);
-   router.post("/auth/validate", validateToken);
+   router.get("/auth/validate", validateToken);
 };
