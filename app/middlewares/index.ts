@@ -1,5 +1,5 @@
 import express from "express";
-import ErrorHandler from "../utils/Error.utils";
+// import ErrorHandler from "../utils/Error.utils";
 import config from "../config";
 import jwt from "jsonwebtoken";
 import { UserData } from "../interfaces";
@@ -9,12 +9,12 @@ import logger from "../utils/Logger.utils";
 export const authJwtMiddleware = (req: UserData, res: express.Response, next: express.NextFunction) => {
    const { authorization } = req.headers;
    if (!authorization) {
-      return ErrorHandler(401, "Unauthorized", res);
+      next(new ErrorException(401, "Unauthorized"));
    }
 
    const token = authorization.replace("Bearer ", "");
    if (!token) {
-      return ErrorHandler(401, "Unauthorized", res);
+      next(new ErrorException(401, "Unauthorized"));
    }
 
    try {
@@ -27,7 +27,7 @@ export const authJwtMiddleware = (req: UserData, res: express.Response, next: ex
          next();
       });
    } catch (error) {
-      return ErrorHandler(401, "Unauthorized", res);
+      next(error);
    }
 };
 
@@ -35,9 +35,10 @@ export const errorMiddleware = (err: ErrorException, req: express.Request, res: 
    try {
       const status: number = err.status || 500;
       const message: string = err.message || "Something went wrong";
+      const userMessage: string = err.userMessage || "Something went wrong";
 
       logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
-      res.status(status).json({ status: "Failed", code: status, message: message }).end();
+      res.status(status).json({ status: "Failed", code: status, message: message, userMessage: userMessage }).end();
    } catch (error) {
       next(error);
    }

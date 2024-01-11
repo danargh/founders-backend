@@ -9,7 +9,7 @@ export const loginValidation = Joi.object({
 export const registerValidation = Joi.object({
    username: Joi.string().max(100).required(),
    email: Joi.string().email().max(100).required(),
-   password: Joi.string().min(6).max(100).required(),
+   password: Joi.string().min(8).max(100).required(),
 });
 
 export const validate = (schema: Joi.ObjectSchema<any>, payload: any) => {

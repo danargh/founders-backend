@@ -1,5 +1,6 @@
 import express, { NextFunction } from "express";
 import { loginService, registerService, validateTokenService } from "../services/authentication";
+import { createUser } from "models/users";
 
 export const login = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
    try {
@@ -33,7 +34,7 @@ export const register = async (req: express.Request, res: express.Response, next
             status: "Success",
             code: 201,
             message: "Register successfull",
-            data: { email: createdUser.email, username: createdUser.username, createdAt: createdUser.createdAt, role: createdUser.role },
+            data: { id: createdUser._id, email: createdUser.email, username: createdUser.username, createdAt: createdUser.createdAt, role: createdUser.role },
          })
          .end();
    } catch (error) {
