@@ -5,7 +5,8 @@
       "baseUrl": "app",
       "outDir": "dist",
       "sourceMap": true,
-      "noImplicitAny": true
+      "noImplicitAny": true,
+      "esModuleInterop": true
    },
    "include": ["app/**/*"],
    "exclude": [

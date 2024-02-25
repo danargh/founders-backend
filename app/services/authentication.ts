@@ -41,6 +41,10 @@ export const registerService = async (req: express.Request) => {
       email: req.body.email,
       username: req.body.username,
       password: await encryptPassword(req.body.password),
+      maleName: req.body.maleName,
+      femaleName: req.body.femaleName,
+      websiteUrl: req.body.websiteUrl,
+      phone: req.body.phone,
    });
 
    return { createdUser };

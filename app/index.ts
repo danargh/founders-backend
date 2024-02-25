@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Application } from "express";
 import http from "http";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -7,9 +7,8 @@ import cors from "cors";
 import router from "./router";
 import { errorMiddleware } from "./middlewares";
 import connectToMongoDB from "./database/index";
-import config from "./config";
 
-const app = express();
+const app: Application = express();
 
 // connect DB
 (async () => {
@@ -34,8 +33,4 @@ app.use(errorMiddleware);
 
 // init swagger?
 
-// running server
-const server = http.createServer(app);
-server.listen(config.PORT, () => {
-   console.log("Server running on http://localhost:8080/");
-});
+export default app;

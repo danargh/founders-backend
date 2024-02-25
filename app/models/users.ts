@@ -7,6 +7,11 @@ const UserSchema = new mongoose.Schema({
    password: { type: String, required: true },
    role: { type: String, required: true, default: "user" },
    createdAt: { type: Date, default: Date.now },
+
+   femaleName: { type: String, required: true },
+   maleName: { type: String, required: true },
+   websiteUrl: { type: String, required: true },
+   phone: { type: String, required: true },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
@@ -25,6 +30,9 @@ export const createUser = async (values: Record<string, any>) => {
 };
 export const deleteUserById = async (id: string) => {
    return await UserModel.findOneAndDelete({ _id: id }).exec();
+};
+export const deleteUserByEmail = async (email: string) => {
+   return await UserModel.findOneAndDelete({ email: email }).exec();
 };
 export const updateUserById = async (id: string, values: Record<string, any>) => {
    return await UserModel.findByIdAndUpdate(id, values, { new: true }).exec();
