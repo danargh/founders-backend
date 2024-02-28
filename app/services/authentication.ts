@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { createUser } from "../models/users";
-import { encryptPassword } from "../helpers";
+import { encryptPassword, generateToken } from "../helpers";
 import { UserResponse } from "interfaces";
 
 export const loginService = async (req: express.Request) => {
@@ -24,9 +24,7 @@ export const loginService = async (req: express.Request) => {
       email: user.email,
       role: user.role,
    };
-   const expiresIn = 7200;
-
-   const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: "2h" });
+   const { token, expiresIn } = await generateToken(payload);
 
    return { user, token, expiresIn };
 };
@@ -46,8 +44,8 @@ export const registerService = async (req: express.Request) => {
       websiteUrl: req.body.websiteUrl,
       phone: req.body.phone,
    });
-
-   return { createdUser };
+   const { token, expiresIn } = await generateToken(createdUser);
+   return { createdUser, token, expiresIn };
 };
 
 export const validateTokenService = async (req: express.Request) => {

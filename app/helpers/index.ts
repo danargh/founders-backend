@@ -11,7 +11,18 @@ export const encryptPassword = async (password: string): Promise<string> => {
    }
 };
 
-export const generateToken = (payload: any): string => {
-   const token = jwt.sign(payload, config.JWT_SECRET as string, { expiresIn: "1h", algorithm: "HS256", issuer: "danargh86@gmail.com" });
-   return token;
+export const generateToken = async (payload: any): Promise<any> => {
+   const expiresIn: number = 7200;
+   const token: string = jwt.sign(payload, config.JWT_SECRET, { expiresIn: "2h" });
+   return { expiresIn, token };
+};
+
+export const getWibDate = async (input: Date): Promise<Date> => {
+   input.setHours(input.getHours() + 7);
+   return input;
+};
+
+export const getExpiresDate = async (expiresIn: any): Promise<Date> => {
+   const utcExpiresDate = new Date(new Date().getTime() + expiresIn * 1000);
+   return getWibDate(utcExpiresDate);
 };
