@@ -1,30 +1,23 @@
 import request from "supertest";
 import app from "../index";
-import mongoose from "mongoose";
-import { deleteUserByEmail } from "models/users";
+import { UserModel, deleteUserByEmail } from "models/users";
+import { closeDBTesting, connectDBTesting } from "./test.utils";
 
-describe("Register /auth/register", () => {
-   // beforeAll(async () => {
-   //    // Delete user if exists
-   //    await deleteUserByEmail("john@gmail.com");
-   // });
-   afterEach(async () => {
-      await deleteUserByEmail("john@gmail.com");
+describe("Register /auth/login", () => {
+   beforeAll(async () => {
+      await connectDBTesting();
+   });
+   afterAll(async () => {
+      await closeDBTesting();
    });
 
    // success case
-   it("should return 201 if register successfull", async () => {
-      const response = await request(app).post("/auth/register").send({
-         email: "john@gmail.com",
-         username: "john",
+   test("It should return 200 and a token", async () => {
+      const response = await request(app).post("/auth/login").send({
+         email: "danar@gmail.com",
          password: "12345678",
       });
-      expect(response.status).toEqual(201);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("data");
    });
-
-   // afterAll((done) => {
-   //    // Closing the DB connection allows Jest to exit successfully.
-   //    mongoose.connection.close();
-   //    done();
-   // });
 });
