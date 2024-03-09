@@ -4,24 +4,38 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [ "main" ]
+   push:
+      branches: ["main"]
 
 jobs:
-  build:
-    runs-on: centos-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+   build:
+      runs-on: centos-latest
+      defaults:
+         run:
+            working-directory: "."
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      steps:
+         - uses: actions/checkout@v3
+         - uses: actions/setup-node@v3
+           with:
+              node-version: 18
+              cache: "npm"
+         - run: npm install
+   Deploy:
+      needs: [build]
+      runs-on: centos-latest
+      env:
+         FOLDER_NAME: /home/founders-api
+      steps:
+         - uses: actions/checkout@v3
+         - name: Preparing to deploy to prod
+           uses: appleboy/ssh-action@master
+           with:
+              host: ${{ secrets.HOST }}
+              username: ${{ secrets.USERNAME }}
+              key: ${{ secrets.PORT }}
+              port: ${{ secrets.PASSWORD }}
+              script: |
+                 cd ~/home/founders-api/script
+                 chmod +x deploy.sh
+                 ./deploy.sh
