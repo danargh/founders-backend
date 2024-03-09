@@ -1,6 +1,5 @@
 import request from "supertest";
 import app from "../index";
-import { UserModel, deleteUserByEmail } from "models/users";
 import { closeDBTesting, connectDBTesting } from "./test.utils";
 
 describe("Register /auth/login", () => {
