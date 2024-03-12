@@ -18,14 +18,14 @@ jobs:
          - uses: actions/checkout@v3
          - uses: actions/setup-node@v3
            with:
-              node-version: 16
+              node-version: 20
               cache: "npm"
          - run: npm install
    Deploy:
       needs: [build]
       runs-on: centos-latest
       env:
-         FOLDER_NAME: /home/founders-api
+         FOLDER_NAME: /home/founders-backend
       steps:
          - uses: actions/checkout@v3
          - name: Preparing to deploy to prod
@@ -36,6 +36,6 @@ jobs:
               port: ${{ secrets.PORT }}
               password: ${{ secrets.PASSWORD }}
               script: |
-                 cd ~/home/founders-api/script
+                 cd ~/home/founders-backend/script
                  chmod +x deploy.sh
                  ./deploy.sh
