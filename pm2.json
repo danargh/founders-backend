@@ -1,0 +1,8 @@
+{
+   "apps": [
+      {
+         "name": "founders-backend node mongodb",
+         "script": "npm run start"
+      }
+   ]
+}
