@@ -28,11 +28,12 @@ jobs:
          - name: Preparing to deploy to prod
            uses: appleboy/ssh-action@master
            with:
+              # host username password port untuk vm di cloud
               host: ${{ secrets.HOST }}
               username: ${{ secrets.USERNAME }}
               port: ${{ secrets.PORT }}
               password: ${{ secrets.PASSWORD }}
               script: |
-                 cd ~/home/founders-backend/script
+                 cd /home/founders-backend/script
                  chmod +x deploy.sh
                  ./deploy.sh
