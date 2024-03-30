@@ -10,6 +10,10 @@ interface Config {
    HOST: string;
    JWT_SECRET: string;
    JWT_SESSION: JwtSession;
+   EMAIL_HOST: string;
+   EMAIL_USER: string;
+   EMAIL_PASS: string;
+   EMAIL_SERVICE: string;
 }
 
 interface JwtSession {
@@ -24,6 +28,10 @@ const config: Config = {
    HOST: process.env.HOST as string,
    JWT_SECRET: process.env.JWT_SECRET as string,
    JWT_SESSION: { session: false },
+   EMAIL_HOST: process.env.EMAIL_HOST as string,
+   EMAIL_USER: process.env.EMAIL_USER as string,
+   EMAIL_PASS: process.env.EMAIL_PASS as string,
+   EMAIL_SERVICE: process.env.EMAIL_SERVICE as string,
 };
 
 export default config;

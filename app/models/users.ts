@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
    maleName: { type: String, required: true },
    websiteUrl: { type: String, required: true },
    phone: { type: String, required: true },
+   verificationOTP: { type: String },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
