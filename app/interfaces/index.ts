@@ -21,4 +21,5 @@ export interface UserResponse {
    maleName: string;
    websiteUrl: string;
    phone: string;
+   isVerified: boolean;
 }

@@ -1,6 +1,7 @@
 import express, { NextFunction } from "express";
-import { getAllUsersService, deleteUserService, updateUserService } from "../services/user";
+import { getAllUsersService, deleteUserService, updateUserService, sendEmailService } from "../services/user";
 import { UserData } from "../interfaces";
+import { verifyEmailService } from "../services/user";
 
 export const getAllUsers = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    try {
@@ -58,6 +59,43 @@ export const updateUser = async (req: UserData, res: express.Response, next: Nex
             username: updatedUser.username,
             createdAt: updatedUser.createdAt,
             role: updatedUser.role,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+
+export const sendEmail = async (req: UserData, res: express.Response, next: NextFunction) => {
+   try {
+      const { user } = await sendEmailService(req.userData.email);
+
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Email sent!",
+         data: {
+            email: user.email,
+            createdAt: user.createdAt,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+
+export const verifyEmail = async (req: UserData, res: express.Response, next: NextFunction) => {
+   try {
+      const { otp } = req.body;
+      const { verifiedUser } = await verifyEmailService(otp, req.userData.email);
+
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Email verified!",
+         data: {
+            email: verifiedUser.email,
+            createdAt: verifiedUser.createdAt,
          },
       });
    } catch (error) {

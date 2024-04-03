@@ -1,7 +1,11 @@
 import express from "express";
 import { ErrorException } from "../utils/Error.utils";
-import { deleteUserById, getUserById, getUsers, updateUserById } from "../models/users";
+import { createVerificationOTP, deleteUserById, getUserByEmail, getUserById, getUsers, updateIsVerified, updateUserById } from "../models/users";
 import { updateUser } from "../controllers/users";
+import crypto from "crypto";
+import { UserResponse } from "interfaces";
+import config from "../config/index";
+import sendMail from "../utils/Email.utils";
 
 export const getAllUsersService = async (role: string) => {
    // authorization only admin
@@ -35,6 +39,37 @@ export const updateUserService = async (id: string, actorId: string, role: strin
    if (!updatedUser) throw new ErrorException(404, "User not found");
 
    return { updatedUser };
+};
+
+export const sendEmailService = async (email: string) => {
+   const user = await getUserByEmail(email);
+   if (!user) throw new ErrorException(404, "User not found");
+
+   try {
+      createVerificationOTP(user._id.toString(), crypto.randomBytes(4).toString("hex"));
+
+      const message = `Kode OTP kamu : ${user.OTPcode}`;
+      await sendMail(email, "Kode OTP", message);
+      return { user };
+   } catch (error) {
+      throw new ErrorException(500, "Internal server error");
+   }
+};
+
+export const verifyEmailService = async (otp: string, email: string) => {
+   const user = await getUserByEmail(email);
+   if (!user) throw new ErrorException(404, "User not found");
+
+   if (user.OTPcode !== otp) throw new ErrorException(400, "Invalid OTP");
+
+   // otp only valid for 1 minutes
+   if (new Date().getTime() - new Date(user.OTPcreatedAt).getTime() > 1 * 60 * 1000) {
+      throw new ErrorException(400, "OTP expired");
+   }
+
+   const verifiedUser = await updateIsVerified(user._id.toString());
+
+   return { verifiedUser };
 };
 
 // export const newPasswordService = async (id: string, actorId: string, password: string) => {

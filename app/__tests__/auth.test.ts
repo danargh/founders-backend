@@ -15,7 +15,7 @@ describe("Login /auth/login", () => {
    // success case
    test("It should return 200 and a token", async () => {
       const response = await request(app).post("/auth/login").send({
-         email: "danar@gmail.com",
+         email: "danar06@gmail.com",
          password: "12345678",
       });
       expect(response.status).toBe(200);
@@ -27,7 +27,7 @@ describe("Login /auth/login", () => {
 describe("Register /auth/register", () => {
    beforeAll(async () => {
       await connectDBTesting();
-      await deleteUserByEmail("danar@gmail.com");
+      await deleteUserByEmail("danar06@gmail.com");
    });
    afterAll(async () => {
       await closeDBTesting();
@@ -36,8 +36,8 @@ describe("Register /auth/register", () => {
    // success case
    test("It should return 200 and a token", async () => {
       const response = await request(app).post("/auth/register").send({
-         email: "danar@gmail.com",
-         username: "danar",
+         email: "danar06@gmail.com",
+         username: "danargh",
          password: "12345678",
          femaleName: "Tunarsih",
          maleName: "Sobirin",

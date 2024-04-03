@@ -25,7 +25,8 @@ const sendMail = async (email: string, subject: string, message: string) => {
 
       logger.info(`Email successfully sent to ${email}`);
    } catch (error) {
-      logger.info(`Email failed to send to ${email}`);
+      logger.info(`Email failed send to ${email}`);
+      throw new ErrorException(500, "Internal server error");
    }
 };
 

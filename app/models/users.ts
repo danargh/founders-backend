@@ -7,12 +7,13 @@ const UserSchema = new mongoose.Schema({
    password: { type: String, required: true },
    role: { type: String, required: true, default: "user" },
    createdAt: { type: Date, default: Date.now },
-
    femaleName: { type: String, required: true },
    maleName: { type: String, required: true },
    websiteUrl: { type: String, required: true },
    phone: { type: String, required: true },
-   verificationOTP: { type: String },
+   OTPcode: { type: String },
+   OTPcreatedAt: { type: Date },
+   isVerified: { type: Boolean, default: false },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
@@ -37,4 +38,10 @@ export const deleteUserByEmail = async (email: string) => {
 };
 export const updateUserById = async (id: string, values: Record<string, any>) => {
    return await UserModel.findByIdAndUpdate(id, values, { new: true }).exec();
+};
+export const createVerificationOTP = async (id: string, otp: string) => {
+   return await UserModel.findByIdAndUpdate(id, { OTPcode: otp, OTPcreatedAt: new Date() }, { new: true }).exec();
+};
+export const updateIsVerified = async (id: string) => {
+   return await UserModel.findByIdAndUpdate(id, { isVerified: true }, { new: true }).exec();
 };
