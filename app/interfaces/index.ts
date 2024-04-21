@@ -15,6 +15,7 @@ export interface UserResponse {
    username: string;
    password: string;
    role: string;
+   membership: string;
    createdAt: Date;
 
    femaleName: string;

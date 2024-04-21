@@ -22,6 +22,7 @@ export const login = async (req: express.Request, res: express.Response, next: e
             createdAt: user.createdAt,
             auth: { token: token, expiresIn: await getExpiresDate(expiresIn) },
             role: user.role,
+            membership: user.membership,
             isVerified: user.isVerified,
          },
       });
@@ -51,6 +52,7 @@ export const register = async (req: express.Request, res: express.Response, next
                auth: { token: token, expiresIn: await getExpiresDate(expiresIn) },
                createdAt: createdUser.createdAt,
                role: createdUser.role,
+               membership: createdUser.membership,
                isVerified: createdUser.isVerified,
             },
          })
