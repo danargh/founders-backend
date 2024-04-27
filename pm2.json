@@ -1,7 +1,7 @@
 {
    "apps": [
       {
-         "name": "founders-backend node mongodb",
+         "name": "founders-backend",
          "script": "npm run start"
       }
    ]
