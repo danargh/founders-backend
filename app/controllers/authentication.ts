@@ -64,8 +64,16 @@ export const register = async (req: express.Request, res: express.Response, next
 
 export const validateToken = async (req: express.Request, res: express.Response, next: NextFunction) => {
    try {
-      await validateTokenService(req);
-      return res.status(200).json({ status: "Success", code: 200, message: "Validate successfull" });
+      const user = await validateTokenService(req);
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Validate successfull",
+         data: {
+            membership: user.membership,
+            username: user.username,
+         },
+      });
    } catch (error) {
       next(error);
    }

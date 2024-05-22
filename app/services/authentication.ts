@@ -53,11 +53,15 @@ export const validateTokenService = async (req: express.Request) => {
    if (!token) throw new ErrorException(401, "Unauthorized");
 
    const secret = config.JWT_SECRET as string;
-   jwt.verify(token, secret, (err, decoded) => {
+
+   let email;
+   jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
          throw new ErrorException(401, err.message);
       } else {
+         email = (decoded as jwt.JwtPayload).email;
          return decoded;
       }
    });
+   return await getUserByEmail(email);
 };
