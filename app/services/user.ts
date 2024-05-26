@@ -1,11 +1,25 @@
-import express from "express";
 import { ErrorException } from "../utils/Error.utils";
 import { createVerificationOTP, deleteUserById, getUserByEmail, getUserById, getUsers, updateIsVerified, updateUserById } from "../models/users";
-import { updateUser } from "../controllers/users";
 import crypto from "crypto";
-import { UserResponse } from "interfaces";
-import config from "../config/index";
 import sendMail from "../utils/Email.utils";
+import express from "express";
+import { decodedToken } from "../helpers";
+import { Identifier } from "../interfaces";
+
+export const getUserService = async (req: express.Request) => {
+   const token = req.headers.authorization?.replace("Bearer ", "");
+   const identifier: Identifier = await decodedToken(token);
+
+   // authorization only owner or admin
+   // if (identifier.role === "user") {
+   //    throw new ErrorException(403, "Forbidden");
+   // }
+
+   const user = await getUserById(identifier.id);
+   if (!user) throw new ErrorException(404, "User not found");
+
+   return { user };
+};
 
 export const getAllUsersService = async (role: string) => {
    // authorization only admin
@@ -17,9 +31,7 @@ export const getAllUsersService = async (role: string) => {
 
 export const deleteUserService = async (id: string, actorId: string, role: string) => {
    // authorization only owner or admin
-   if (actorId !== id && role !== "admin") {
-      throw new ErrorException(403, "Forbidden");
-   } else if (role !== "admin") {
+   if (role === "user" && actorId !== id) {
       throw new ErrorException(403, "Forbidden");
    }
 

@@ -70,6 +70,7 @@ export const validateToken = async (req: express.Request, res: express.Response,
          code: 200,
          message: "Validate successfull",
          data: {
+            id: user._id,
             membership: user.membership,
             username: user.username,
          },

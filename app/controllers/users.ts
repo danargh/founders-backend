@@ -1,7 +1,33 @@
 import express, { NextFunction } from "express";
-import { getAllUsersService, deleteUserService, updateUserService, sendEmailService } from "../services/user";
+import { getAllUsersService, deleteUserService, updateUserService, sendEmailService, getUserService } from "../services/user";
 import { UserData } from "../interfaces";
 import { verifyEmailService } from "../services/user";
+
+export const getUser = async (req: UserData, res: express.Response, next: express.NextFunction) => {
+   try {
+      const { user } = await getUserService(req);
+      return res.status(200).json({
+         status: "Success",
+         code: 200,
+         message: "Get user successfull!",
+         data: {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+            femaleName: user.femaleName,
+            maleName: user.maleName,
+            websiteUrl: user.websiteUrl,
+            phone: user.phone,
+            createdAt: user.createdAt,
+            role: user.role,
+            membership: user.membership,
+            isVerified: user.isVerified,
+         },
+      });
+   } catch (error) {
+      return next(error);
+   }
+};
 
 export const getAllUsers = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    try {
