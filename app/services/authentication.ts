@@ -57,7 +57,7 @@ export const validateTokenService = async (req: express.Request) => {
    let email;
    jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
-         throw new ErrorException(401, err.message);
+         throw new ErrorException(401, err.message, err.message);
       } else {
          email = (decoded as jwt.JwtPayload).email;
          return decoded;

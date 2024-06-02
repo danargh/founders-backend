@@ -67,12 +67,10 @@ export const validateToken = async (req: express.Request, res: express.Response,
       const user = await validateTokenService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
-         message: "Validate successfull",
          data: {
-            id: user._id,
-            membership: user.membership,
             username: user.username,
+            membership: user.membership,
+            role: user.role,
          },
       });
    } catch (error) {
