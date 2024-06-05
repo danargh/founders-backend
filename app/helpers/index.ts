@@ -32,14 +32,11 @@ export const getExpiresDate = async (expiresIn: any): Promise<Date> => {
 export const decodedToken = async (token: string): Promise<any> => {
    const secret = config.JWT_SECRET as string;
 
-   // let identifier: Identifier;
-   const identifier = jwt.verify(token, secret, async (err, decoded) => {
-      if (err) {
-         throw new ErrorException(401, err.message);
-      } else {
-         // identifier = decoded as jwt.JwtPayload;
-         return decoded;
-      }
-   });
-   return identifier;
+   try {
+      // let identifier: Identifier;
+      const identifier = jwt.verify(token, secret);
+      return identifier;
+   } catch (error) {
+      throw new ErrorException(401, error.message);
+   }
 };

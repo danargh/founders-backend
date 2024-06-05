@@ -10,9 +10,7 @@ export const registerValidation = Joi.object({
    username: Joi.string().max(100).required(),
    email: Joi.string().email().max(100).required(),
    password: Joi.string().min(8).max(100).required(),
-   maleName: Joi.string().max(100).required(),
-   femaleName: Joi.string().max(100).required(),
-   websiteUrl: Joi.string().max(100).required(),
+   repeatPassword: Joi.ref("password"),
    phone: Joi.string().max(100).required(),
    terms: Joi.boolean().valid(true).required(),
 });

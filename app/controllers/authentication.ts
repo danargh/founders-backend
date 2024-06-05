@@ -15,9 +15,6 @@ export const login = async (req: express.Request, res: express.Response, next: e
             id: user._id,
             email: user.email,
             username: user.username,
-            femaleName: user.femaleName,
-            maleName: user.maleName,
-            websiteUrl: user.websiteUrl,
             phone: user.phone,
             createdAt: user.createdAt,
             auth: { token: token, expiresIn: await getExpiresDate(expiresIn) },
@@ -45,9 +42,6 @@ export const register = async (req: express.Request, res: express.Response, next
                id: createdUser._id,
                email: createdUser.email,
                username: createdUser.username,
-               femaleName: createdUser.femaleName,
-               maleName: createdUser.maleName,
-               websiteUrl: createdUser.websiteUrl,
                phone: createdUser.phone,
                auth: { token: token, expiresIn: await getExpiresDate(expiresIn) },
                createdAt: createdUser.createdAt,
@@ -64,7 +58,7 @@ export const register = async (req: express.Request, res: express.Response, next
 
 export const validateToken = async (req: express.Request, res: express.Response, next: NextFunction) => {
    try {
-      const user = await validateTokenService(req);
+      const user = await validateTokenService(req, res);
       return res.status(200).json({
          status: "Success",
          data: {

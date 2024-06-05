@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import config from "../config";
 import { createUser } from "../models/users";
 import { encryptPassword, generateToken } from "../helpers";
-import { UserResponse } from "interfaces";
+import { User } from "interfaces";
 
 export const loginService = async (req: express.Request) => {
    validate(loginValidation, req.body);
@@ -35,7 +35,7 @@ export const registerService = async (req: express.Request) => {
    const existingUser = await getUserByEmail(req.body.email);
    if (existingUser) throw new ErrorException(400, "User already exists", "Email or password is incorrect");
 
-   const createdUser: UserResponse = await createUser({
+   const createdUser: User = await createUser({
       email: req.body.email,
       username: req.body.username,
       password: await encryptPassword(req.body.password),
@@ -48,7 +48,7 @@ export const registerService = async (req: express.Request) => {
    return { createdUser, token, expiresIn };
 };
 
-export const validateTokenService = async (req: express.Request) => {
+export const validateTokenService = async (req: express.Request, res: express.Response) => {
    const token = req.headers.authorization?.replace("Bearer ", "");
    if (!token) throw new ErrorException(401, "Unauthorized");
 
@@ -57,7 +57,11 @@ export const validateTokenService = async (req: express.Request) => {
    let email;
    jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
-         throw new ErrorException(401, err.message, err.message);
+         if (err.name === "TokenExpiredError") {
+            res.clearCookie("userToken");
+            throw new ErrorException(401, err.message, err.message);
+         }
+         throw new ErrorException(400, err.message, err.message);
       } else {
          email = (decoded as jwt.JwtPayload).email;
          return decoded;
