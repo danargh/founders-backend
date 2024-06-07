@@ -6,11 +6,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { createUser } from "../models/users";
-import { encryptPassword, generateToken } from "../helpers";
+import { encryptPassword, generateToken, refreshToken } from "../helpers";
 import { User } from "interfaces";
 
 export const loginService = async (req: express.Request) => {
    validate(loginValidation, req.body);
+   const requestToken = req.headers.authorization?.replace("Bearer ", "");
 
    const user = await getUserByEmail(req.body.email);
    if (!user) throw new ErrorException(400, "User not found", "Email or password is incorrect");
@@ -24,8 +25,16 @@ export const loginService = async (req: express.Request) => {
       email: user.email,
       role: user.role,
    };
-   const { token, expiresIn } = await generateToken(payload);
+   let token;
+   let expiresIn;
 
+   if (requestToken) {
+      token = refreshToken(requestToken);
+   } else {
+      const result = await generateToken(payload);
+      token = result.token;
+      expiresIn = result.expiresIn;
+   }
    return { user, token, expiresIn };
 };
 
@@ -58,7 +67,6 @@ export const validateTokenService = async (req: express.Request, res: express.Re
    jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
          if (err.name === "TokenExpiredError") {
-            res.clearCookie("userToken");
             throw new ErrorException(401, err.message, err.message);
          }
          throw new ErrorException(400, err.message, err.message);

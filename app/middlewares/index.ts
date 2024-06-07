@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 import { UserData } from "../interfaces";
 import { ErrorException } from "../utils/Error.utils";
 import logger from "../utils/Logger.utils";
+import { ifTokenExpired } from "../helpers";
 
-export const authJwtMiddleware = (req: UserData, res: express.Response, next: express.NextFunction) => {
+export const authJwtMiddleware = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    const { authorization } = req.headers;
    if (!authorization) {
       next(new ErrorException(401, "Unauthorized"));
@@ -15,6 +16,12 @@ export const authJwtMiddleware = (req: UserData, res: express.Response, next: ex
    const token = authorization.replace("Bearer ", "");
    if (!token) {
       next(new ErrorException(401, "Unauthorized"));
+   }
+
+   // if token expired
+   const tokenExpired = await ifTokenExpired(token);
+   if (tokenExpired === true) {
+      next(new ErrorException(401, "Token Expired"));
    }
 
    try {

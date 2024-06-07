@@ -3,12 +3,11 @@ import { createVerificationOTP, deleteUserById, getUserByEmail, getUserById, get
 import crypto from "crypto";
 import sendMail from "../utils/Email.utils";
 import express from "express";
-import { decodedToken } from "../helpers";
+import { getIdentifier } from "../helpers";
 import { Identifier } from "../interfaces";
 
 export const getUserService = async (req: express.Request) => {
-   const token = req.headers.authorization?.replace("Bearer ", "");
-   const identifier: Identifier = await decodedToken(token);
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
 
    // authorization only owner or admin
    // if (identifier.role === "user") {

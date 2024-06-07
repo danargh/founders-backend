@@ -19,24 +19,34 @@ export const generateToken = async (payload: any): Promise<any> => {
    return { expiresIn, token };
 };
 
+export const ifTokenExpired = async (token: string): Promise<boolean> => {
+   // const secret = config.JWT_SECRET as string;
+   const [, payload] = token.split(".");
+   const decodedPayload = JSON.parse(atob(payload));
+   const exp = decodedPayload.exp * 1000; // Convert to milliseconds
+   return Date.now() >= exp;
+};
+
+export const refreshToken = async (token: string): Promise<string> => {
+   const secret = config.JWT_SECRET as string;
+   const decodedToken = jwt.verify(token, secret) as Identifier;
+   const newToken = jwt.sign({ id: decodedToken.id }, secret, { expiresIn: "2h" });
+   return newToken;
+};
+
 export const getWibDate = async (input: Date): Promise<Date> => {
    input.setHours(input.getHours() + 7);
    return input;
 };
 
+// get identifer from token
+export const getIdentifier = async (token: string): Promise<Identifier> => {
+   const secret = config.JWT_SECRET as string;
+   const identifier = jwt.verify(token, secret) as Identifier;
+   return identifier;
+};
+
 export const getExpiresDate = async (expiresIn: any): Promise<Date> => {
    const utcExpiresDate = new Date(new Date().getTime() + expiresIn * 1000);
    return getWibDate(utcExpiresDate);
-};
-
-export const decodedToken = async (token: string): Promise<any> => {
-   const secret = config.JWT_SECRET as string;
-
-   try {
-      // let identifier: Identifier;
-      const identifier = jwt.verify(token, secret);
-      return identifier;
-   } catch (error) {
-      throw new ErrorException(401, error.message);
-   }
 };

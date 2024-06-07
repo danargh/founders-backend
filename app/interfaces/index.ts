@@ -29,7 +29,7 @@ export interface User {
    isVerified: boolean;
    createdAt: Date;
    membership: string;
-   invitations: Types.ObjectId[] | Invitation[];
+   invitations: Types.ObjectId | Invitation[];
 }
 
 // session
@@ -42,11 +42,13 @@ export interface Session {
 // invitation
 export interface Invitation {
    _id: string;
+   user: Types.ObjectId | User;
    groom: Types.ObjectId | Groom;
    bride: Types.ObjectId | Bride;
    websiteUrl: string;
    dueDateActive: Date;
-   theme: string;
+   theme: string | null;
+   pricingCategory: string;
    events: Types.ObjectId | Event;
    guests: Types.ObjectId | Guest[];
 }

@@ -1,18 +1,48 @@
 import mongoose from "mongoose";
-import { Invitation } from "../interfaces/index";
+import { Invitation, User } from "../interfaces/index";
+import { UserModel } from "./users";
 
 // invitation
 const InvitationSchema = new mongoose.Schema<Invitation>({
+   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
    groom: { type: mongoose.Schema.Types.ObjectId, ref: "Groom" },
    bride: { type: mongoose.Schema.Types.ObjectId, ref: "Bride" },
    websiteUrl: { type: String, required: true },
    dueDateActive: { type: Date, required: true },
-   theme: { type: String, required: true },
+   pricingCategory: { type: String, required: true },
+   theme: { type: String, required: false },
    events: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
    guests: { type: mongoose.Schema.Types.ObjectId, ref: "Guest" },
 });
 
 export const InvitationModel = mongoose.model("Invitation", InvitationSchema);
+
+export const createInvitation = async (values: Record<string, any>) => {
+   try {
+      // Buat undangan baru
+      const invitation = new InvitationModel(values);
+      await invitation.save();
+
+      // Tambahkan referensi undangan ke user
+      await UserModel.findByIdAndUpdate(invitation.user, {
+         $push: { invitations: invitation._id },
+      });
+
+      return invitation.toObject();
+   } catch (error) {
+      console.error("Error creating invitation:", error);
+      throw error;
+   }
+};
+export const getInvitationByUserId = async (userId: string) => {
+   try {
+      const invitation = await InvitationModel.find({ user: userId }).populate("groom").populate("bride").populate("events").populate("guests");
+      return invitation;
+   } catch (error) {
+      console.error("Error getting invitation by user id:", error);
+      throw error;
+   }
+};
 
 // groom
 const GroomSchema = new mongoose.Schema({
