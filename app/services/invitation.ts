@@ -1,4 +1,4 @@
-import { getInvitationByUserId } from "./../models/invitations";
+import { getInvitationByUserId, getInvitationById } from "./../models/invitations";
 import { createInvitation } from "../models/invitations";
 import express from "express";
 import { getIdentifier } from "../helpers/index";
@@ -25,6 +25,15 @@ export const getInvitationService = async (req: express.Request) => {
 
    // Get invitation by user id
    const invitation = await getInvitationByUserId(identifier.id);
+
+   return { invitation };
+};
+
+export const getInvitationByIdService = async (req: express.Request) => {
+   const { id } = req.params;
+
+   // Get invitation by user id
+   const invitation = await getInvitationById(id);
 
    return { invitation };
 };

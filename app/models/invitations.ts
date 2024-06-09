@@ -43,6 +43,15 @@ export const getInvitationByUserId = async (userId: string) => {
       throw error;
    }
 };
+export const getInvitationById = async (id: string) => {
+   try {
+      const invitation = await InvitationModel.findOne({ _id: id }).populate("groom").populate("bride").populate("events").populate("guests");
+      return invitation;
+   } catch (error) {
+      console.error("Error getting invitation by id:", error);
+      throw error;
+   }
+};
 
 // groom
 const GroomSchema = new mongoose.Schema({
