@@ -8,12 +8,11 @@ import { validate, createInvitationValidation } from "../utils/Validation.utils"
 export const createInvitationService = async (req: express.Request) => {
    validate(createInvitationValidation, req.body);
    const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
-
    const requestData = req.body;
 
    // Buat undangan baru
    const createdInvitation = await createInvitation({
-      user: identifier.id,
+      user: identifier._id,
       ...requestData,
    });
 
@@ -24,7 +23,7 @@ export const getInvitationService = async (req: express.Request) => {
    const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
 
    // Get invitation by user id
-   const invitation = await getInvitationByUserId(identifier.id);
+   const invitation = await getInvitationByUserId(identifier._id);
 
    return { invitation };
 };

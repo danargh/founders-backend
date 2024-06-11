@@ -41,9 +41,14 @@ export const getWibDate = async (input: Date): Promise<Date> => {
 
 // get identifer from token
 export const getIdentifier = async (token: string): Promise<Identifier> => {
-   const secret = config.JWT_SECRET as string;
-   const identifier = jwt.verify(token, secret) as Identifier;
-   return identifier;
+   try {
+      const secret = config.JWT_SECRET as string;
+      const identifier = jwt.verify(token, secret) as Identifier;
+      return identifier;
+   } catch (error) {
+      console.log(error);
+      throw new ErrorException(401, "Unauthorized");
+   }
 };
 
 export const getExpiresDate = async (expiresIn: any): Promise<Date> => {

@@ -11,13 +11,10 @@ export const postInvitation = async (req: express.Request, res: express.Response
          code: 201,
          message: "Post invitation successfull!",
          data: {
-            groom: createdInvitation.groom,
-            bride: createdInvitation.bride,
+            id: createdInvitation._id,
             websiteUrl: createdInvitation.websiteUrl,
             dueDateActive: createdInvitation.dueDateActive,
             theme: createdInvitation.theme,
-            events: createdInvitation.events,
-            guests: createdInvitation.guests,
          },
       });
    } catch (error) {

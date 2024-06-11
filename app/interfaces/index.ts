@@ -10,7 +10,7 @@ export interface UserRole extends Request {
    role: string;
 }
 export interface Identifier extends JwtPayload {
-   id: string;
+   _id: string;
    username: string;
    email: string;
    role: string;

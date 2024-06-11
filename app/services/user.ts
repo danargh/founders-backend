@@ -14,7 +14,7 @@ export const getUserService = async (req: express.Request) => {
    //    throw new ErrorException(403, "Forbidden");
    // }
 
-   const user = await getUserById(identifier.id);
+   const user = await getUserById(identifier._id);
    if (!user) throw new ErrorException(404, "User not found");
 
    return { user };
