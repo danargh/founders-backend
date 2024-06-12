@@ -14,8 +14,8 @@ export interface Identifier extends JwtPayload {
    username: string;
    email: string;
    role: string;
-   iat: number;
-   exp: number;
+   iat?: number;
+   exp?: number;
 }
 
 // user
@@ -53,18 +53,20 @@ export interface Invitation {
    guests: Types.ObjectId | Guest[];
 }
 export interface Groom {
-   fullName: string;
-   nickname: string;
-   childOrder: number;
-   fatherName: string;
-   motherName: string;
-   address: string;
-   photo: string;
-   socialMedia: Record<string, string>;
+   invitationId: Types.ObjectId | Invitation;
+   fullName: string | null;
+   nickName: string | null;
+   childOrder: number | null;
+   fatherName: string | null;
+   motherName: string | null;
+   address: string | null;
+   photo: string | null;
+   socialMedia: Record<string, string> | null;
 }
 export interface Bride {
+   invitationId: Types.ObjectId | Invitation;
    fullName: string;
-   nickname: string;
+   nickName: string;
    childOrder: number;
    fatherName: string;
    motherName: string;

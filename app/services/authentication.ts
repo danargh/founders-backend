@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import config from "../config";
 import { createUser } from "../models/users";
 import { encryptPassword, generateToken, refreshToken } from "../helpers";
-import { User } from "interfaces";
+import { Identifier, User } from "interfaces";
 
 export const loginService = async (req: express.Request) => {
    validate(loginValidation, req.body);
@@ -19,8 +19,8 @@ export const loginService = async (req: express.Request) => {
    const isMatch: boolean = await bcrypt.compare(req.body.password, user.password);
    if (!isMatch) throw new ErrorException(400, "Invalid password", "Email or password is incorrect");
 
-   const payload = {
-      id: user._id,
+   const payload: Identifier = {
+      _id: user._id as unknown as string,
       username: user.username,
       email: user.email,
       role: user.role,
@@ -53,7 +53,13 @@ export const registerService = async (req: express.Request) => {
       websiteUrl: req.body.websiteUrl,
       phone: req.body.phone,
    });
-   const { token, expiresIn } = await generateToken(createdUser);
+   const payload: Identifier = {
+      _id: createdUser._id as unknown as string,
+      username: createdUser.username,
+      email: createdUser.email,
+      role: createdUser.role,
+   };
+   const { token, expiresIn } = await generateToken(payload);
    return { createdUser, token, expiresIn };
 };
 
@@ -67,7 +73,7 @@ export const validateTokenService = async (req: express.Request, res: express.Re
    jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
          if (err.name === "TokenExpiredError") {
-            throw new ErrorException(401, err.message, err.message);
+            throw new ErrorException(401, "Token Expired", "Token Expired");
          }
          throw new ErrorException(400, err.message, err.message);
       } else {

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Invitation, User } from "../interfaces/index";
 import { UserModel } from "./users";
+import { required } from "joi";
 
 // invitation
 const InvitationSchema = new mongoose.Schema<Invitation>({
@@ -55,22 +56,58 @@ export const getInvitationById = async (id: string) => {
 
 // groom
 const GroomSchema = new mongoose.Schema({
-   fullName: { type: String, required: true },
-   nickname: { type: String, required: true },
-   childOrder: { type: Number, required: true },
-   fatherName: { type: String, required: true },
-   motherName: { type: String, required: true },
-   address: { type: String, required: true },
-   photo: { type: String, required: true },
-   socialMedia: { type: Object, required: true },
+   invitationId: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation", required: true },
+   fullName: { type: String, required: false },
+   nickName: { type: String, required: false },
+   childOrder: { type: Number, required: false },
+   fatherName: { type: String, required: false },
+   motherName: { type: String, required: false },
+   address: { type: String, required: false },
+   photo: { type: String, required: false },
+   socialMedia: { type: Object, required: false },
 });
-
 export const GroomModel = mongoose.model("Groom", GroomSchema);
+export const getGroomByInvitationId = async (invitationId: string) => {
+   try {
+      const groom = await GroomModel.findOne({ invitationId });
+      return groom;
+   } catch (error) {
+      console.error("Error getting groom by invitation id:", error);
+      throw error;
+   }
+};
+export const createGroom = async (values: Record<string, any>) => {
+   try {
+      // Buat groom baru
+      const groom = new GroomModel(values);
+      await groom.save();
+
+      // Tambahkan referensi undangan ke invitation
+      await InvitationModel.findByIdAndUpdate(groom.invitationId, {
+         $set: { groom: groom._id },
+      });
+
+      return groom.toObject();
+   } catch (error) {
+      console.error("Error creating groom:", error);
+      throw error;
+   }
+};
+export const updateGroom = async (id: string, values: Record<string, any>) => {
+   try {
+      const groom = await GroomModel.findByIdAndUpdate(id, values, { new: true });
+      return groom;
+   } catch (error) {
+      console.error("Error updating groom:", error);
+      throw error;
+   }
+};
 
 // bride
 const BrideSchema = new mongoose.Schema({
+   invitationId: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation" },
    fullName: { type: String, required: true },
-   nickname: { type: String, required: true },
+   nickName: { type: String, required: true },
    childOrder: { type: Number, required: true },
    fatherName: { type: String, required: true },
    motherName: { type: String, required: true },
@@ -78,8 +115,42 @@ const BrideSchema = new mongoose.Schema({
    photo: { type: String, required: true },
    socialMedia: { type: Object, required: true },
 });
-
 export const BrideModel = mongoose.model("Bride", BrideSchema);
+export const getBrideByInvitationId = async (invitationId: string) => {
+   try {
+      const bride = await BrideModel.findOne({ invitationId });
+      return bride;
+   } catch (error) {
+      console.error("Error getting bride by invitation id:", error);
+      throw error;
+   }
+};
+export const createBride = async (values: Record<string, any>) => {
+   try {
+      // Buat groom baru
+      const bride = new BrideModel(values);
+      await bride.save();
+
+      // Tambahkan referensi undangan ke invitation
+      await InvitationModel.findByIdAndUpdate(bride.invitationId, {
+         $push: { bride: bride._id },
+      });
+
+      return bride.toObject();
+   } catch (error) {
+      console.error("Error creating bride:", error);
+      throw error;
+   }
+};
+export const updateBride = async (id: string, values: Record<string, any>) => {
+   try {
+      const bride = await BrideModel.findByIdAndUpdate(id, values, { new: true });
+      return bride;
+   } catch (error) {
+      console.error("Error updating bride:", error);
+      throw error;
+   }
+};
 
 // event
 const EventSchema = new mongoose.Schema({
