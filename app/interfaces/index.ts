@@ -65,14 +65,14 @@ export interface Groom {
 }
 export interface Bride {
    invitationId: Types.ObjectId | Invitation;
-   fullName: string;
-   nickName: string;
-   childOrder: number;
-   fatherName: string;
-   motherName: string;
-   address: string;
-   photo: string;
-   socialMedia: Record<string, string>;
+   fullName: string | null;
+   nickName: string | null;
+   childOrder: number | null;
+   fatherName: string | null;
+   motherName: string | null;
+   address: string | null;
+   photo: string | null;
+   socialMedia: Record<string, string> | null;
 }
 export interface Event {
    category: string;

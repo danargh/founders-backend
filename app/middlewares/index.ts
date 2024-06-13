@@ -45,7 +45,7 @@ export const errorMiddleware = (err: ErrorException, req: express.Request, res: 
       const userMessage: string = err.userMessage || "Something went wrong";
 
       logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
-      res.status(status).json({ status: "Failed", code: status, message: message, userMessage: userMessage }).end();
+      res.status(status).json({ status: "Failed", message: message, userMessage: userMessage }).end();
    } catch (error) {
       next(error);
    }

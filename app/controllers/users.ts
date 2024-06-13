@@ -8,7 +8,6 @@ export const getUser = async (req: UserData, res: express.Response, next: expres
       const { user } = await getUserService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get user successfull!",
          data: {
             id: user._id,
@@ -31,7 +30,6 @@ export const getAllUsers = async (req: UserData, res: express.Response, next: ex
       const { users } = await getAllUsersService(req.userData.role);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get users successfull!",
          data: users.map(
             (user) =>
@@ -54,7 +52,6 @@ export const deleteUser = async (req: UserData, res: express.Response, next: Nex
       const { deletedUser } = await deleteUserService(id, req.userData.id, req.userData.role);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Delete user successfull!",
          data: {
             email: deletedUser.email,
@@ -75,7 +72,6 @@ export const updateUser = async (req: UserData, res: express.Response, next: Nex
 
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Update user successfull!",
          data: {
             email: updatedUser.email,
@@ -95,7 +91,6 @@ export const sendEmail = async (req: UserData, res: express.Response, next: Next
 
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Email sent!",
          data: {
             email: user.email,
@@ -114,7 +109,6 @@ export const verifyEmail = async (req: UserData, res: express.Response, next: Ne
 
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Email verified!",
          data: {
             email: verifiedUser.email,

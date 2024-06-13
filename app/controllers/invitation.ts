@@ -3,10 +3,8 @@ import {
    createInvitationService,
    getInvitationService,
    getInvitationByIdService,
-   createGroomService,
    getGroomByInvitationIdService,
    updateGroomService,
-   createBrideService,
    getBrideByInvitationIdService,
    updateBrideService,
 } from "../services/invitation";
@@ -19,7 +17,6 @@ export const postInvitation = async (req: express.Request, res: express.Response
       const { createdInvitation } = await createInvitationService(req);
       return res.status(201).json({
          status: "Success",
-         code: 201,
          message: "Post invitation successfull!",
          data: {
             id: createdInvitation._id,
@@ -37,7 +34,6 @@ export const getInvitations = async (req: express.Request, res: express.Response
       const { invitation } = await getInvitationService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get invitation successfull!",
          data: invitation.map((invitation: Invitation) => ({
             id: invitation._id,
@@ -60,7 +56,6 @@ export const getInvitationById = async (req: express.Request, res: express.Respo
       const { invitation } = await getInvitationByIdService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get invitation successfull!",
          data: {
             id: invitation._id,
@@ -80,35 +75,11 @@ export const getInvitationById = async (req: express.Request, res: express.Respo
 };
 
 // Groom
-export const postGroom = async (req: express.Request, res: express.Response, next: NextFunction) => {
-   try {
-      const { createdGroom } = await createGroomService(req);
-      return res.status(201).json({
-         status: "Success",
-         code: 201,
-         message: "Post groom successfull!",
-         data: {
-            id: createdGroom._id,
-            fullName: createdGroom.fullName,
-            nickName: createdGroom.nickName,
-            childOrder: createdGroom.childOrder,
-            fatherName: createdGroom.fatherName,
-            motherName: createdGroom.motherName,
-            address: createdGroom.address,
-            photo: createdGroom.photo,
-            socialMedia: createdGroom.socialMedia,
-         },
-      });
-   } catch (error) {
-      next(error);
-   }
-};
 export const getGroomByInvitationId = async (req: express.Request, res: express.Response, next: NextFunction) => {
    try {
       const { groom } = await getGroomByInvitationIdService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get groom successfull!",
          data: {
             id: groom._id,
@@ -131,7 +102,6 @@ export const updateGroom = async (req: express.Request, res: express.Response, n
       const { updatedGroom } = await updateGroomService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Update groom successfull!",
          data: {
             id: updatedGroom._id,
@@ -151,35 +121,11 @@ export const updateGroom = async (req: express.Request, res: express.Response, n
 };
 
 // Bride
-export const postBride = async (req: express.Request, res: express.Response, next: NextFunction) => {
-   try {
-      const { createdBride } = await createBrideService(req);
-      return res.status(201).json({
-         status: "Success",
-         code: 201,
-         message: "Post bride successfull!",
-         data: {
-            id: createdBride._id,
-            fullName: createdBride.fullName,
-            nickName: createdBride.nickName,
-            childOrder: createdBride.childOrder,
-            fatherName: createdBride.fatherName,
-            motherName: createdBride.motherName,
-            address: createdBride.address,
-            photo: createdBride.photo,
-            socialMedia: createdBride.socialMedia,
-         },
-      });
-   } catch (error) {
-      next(error);
-   }
-};
 export const getBrideByInvitationId = async (req: express.Request, res: express.Response, next: NextFunction) => {
    try {
       const { bride } = await getBrideByInvitationIdService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Get bride successfull!",
          data: {
             id: bride._id,
@@ -202,7 +148,6 @@ export const updateBride = async (req: express.Request, res: express.Response, n
       const { updatedBride } = await updateBrideService(req);
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Update bride successfull!",
          data: {
             id: updatedBride._id,

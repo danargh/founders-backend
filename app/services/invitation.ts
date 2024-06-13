@@ -1,4 +1,4 @@
-import { getInvitationByUserId, getInvitationById, createGroom, getGroomByInvitationId, createBride, getBrideByInvitationId, updateBride } from "./../models/invitations";
+import { getInvitationByUserId, getInvitationById, getGroomByInvitationId, getBrideByInvitationId, updateBride } from "./../models/invitations";
 import { createInvitation, updateGroom } from "../models/invitations";
 import express from "express";
 import { getIdentifier } from "../helpers/index";
@@ -37,12 +37,6 @@ export const getInvitationByIdService = async (req: express.Request) => {
 };
 
 // Groom
-export const createGroomService = async (req: express.Request) => {
-   const requestData = req.body;
-
-   const createdGroom = await createGroom(requestData);
-   return { createdGroom };
-};
 export const getGroomByInvitationIdService = async (req: express.Request) => {
    const { invitationId } = req.params;
 
@@ -51,21 +45,15 @@ export const getGroomByInvitationIdService = async (req: express.Request) => {
    return { groom };
 };
 export const updateGroomService = async (req: express.Request) => {
-   const { id } = req.params;
+   const { invitationId } = req.params;
    const requestData = req.body;
 
-   const updatedGroom = await updateGroom(id, requestData);
+   const updatedGroom = await updateGroom(invitationId, requestData);
 
    return { updatedGroom };
 };
 
 // Bride
-export const createBrideService = async (req: express.Request) => {
-   const requestData = req.body;
-
-   const createdBride = await createBride(requestData);
-   return { createdBride };
-};
 export const getBrideByInvitationIdService = async (req: express.Request) => {
    const { invitationId } = req.params;
 
@@ -74,10 +62,10 @@ export const getBrideByInvitationIdService = async (req: express.Request) => {
    return { bride };
 };
 export const updateBrideService = async (req: express.Request) => {
-   const { id } = req.params;
+   const { invitationId } = req.params;
    const requestData = req.body;
 
-   const updatedBride = await updateBride(id, requestData);
+   const updatedBride = await updateBride(invitationId, requestData);
 
    return { updatedBride };
 };

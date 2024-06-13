@@ -9,7 +9,6 @@ export const login = async (req: express.Request, res: express.Response, next: e
 
       return res.status(200).json({
          status: "Success",
-         code: 200,
          message: "Login successful",
          data: {
             id: user._id,
@@ -36,7 +35,6 @@ export const register = async (req: express.Request, res: express.Response, next
          .status(201)
          .json({
             status: "Success",
-            code: 201,
             message: "Register successfull",
             data: {
                id: createdUser._id,

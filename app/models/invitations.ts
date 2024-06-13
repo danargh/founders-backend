@@ -76,26 +76,9 @@ export const getGroomByInvitationId = async (invitationId: string) => {
       throw error;
    }
 };
-export const createGroom = async (values: Record<string, any>) => {
+export const updateGroom = async (invitationId: string, values: Record<string, any>) => {
    try {
-      // Buat groom baru
-      const groom = new GroomModel(values);
-      await groom.save();
-
-      // Tambahkan referensi undangan ke invitation
-      await InvitationModel.findByIdAndUpdate(groom.invitationId, {
-         $set: { groom: groom._id },
-      });
-
-      return groom.toObject();
-   } catch (error) {
-      console.error("Error creating groom:", error);
-      throw error;
-   }
-};
-export const updateGroom = async (id: string, values: Record<string, any>) => {
-   try {
-      const groom = await GroomModel.findByIdAndUpdate(id, values, { new: true });
+      const groom = await GroomModel.findOneAndUpdate({ invitationId }, values, { new: true, upsert: true, runValidators: true });
       return groom;
    } catch (error) {
       console.error("Error updating groom:", error);
@@ -125,26 +108,9 @@ export const getBrideByInvitationId = async (invitationId: string) => {
       throw error;
    }
 };
-export const createBride = async (values: Record<string, any>) => {
+export const updateBride = async (invitationId: string, values: Record<string, any>) => {
    try {
-      // Buat groom baru
-      const bride = new BrideModel(values);
-      await bride.save();
-
-      // Tambahkan referensi undangan ke invitation
-      await InvitationModel.findByIdAndUpdate(bride.invitationId, {
-         $push: { bride: bride._id },
-      });
-
-      return bride.toObject();
-   } catch (error) {
-      console.error("Error creating bride:", error);
-      throw error;
-   }
-};
-export const updateBride = async (id: string, values: Record<string, any>) => {
-   try {
-      const bride = await BrideModel.findByIdAndUpdate(id, values, { new: true });
+      const bride = await BrideModel.findOneAndUpdate({ invitationId }, values, { new: true, upsert: true, runValidators: true });
       return bride;
    } catch (error) {
       console.error("Error updating bride:", error);
