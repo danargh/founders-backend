@@ -120,17 +120,55 @@ export const updateBride = async (invitationId: string, values: Record<string, a
 
 // event
 const EventSchema = new mongoose.Schema({
+   invitationId: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation", required: true },
    category: { type: String, required: true },
    title: { type: String, required: true },
-   startTime: { type: Date, required: true },
-   endTime: { type: Date, required: true },
+   date: { type: Date, required: true },
+   startTime: { type: String, required: true },
+   endTime: { type: String, required: true },
    timezone: { type: String, required: true },
    place: { type: String, required: true },
    address: { type: String, required: true },
    googleMapsUrl: { type: String, required: true },
 });
-
 export const EventModel = mongoose.model("Event", EventSchema);
+export const updateEvent = async (id: string, values: Record<string, any>) => {
+   try {
+      const event = await EventModel.findOneAndUpdate({ id }, values, { new: true, upsert: true, runValidators: true });
+      return event;
+   } catch (error) {
+      console.error("Error updating event:", error);
+      throw error;
+   }
+};
+export const createEventByInvitationId = async (invitationId: string, values: Record<string, any>) => {
+   try {
+      const event = new EventModel({ ...values, invitationId });
+      await event.save();
+      return event;
+   } catch (error) {
+      console.error("Error creating event by invitation id:", error);
+      throw error;
+   }
+};
+export const getEventsByInvitationId = async (invitationId: string) => {
+   try {
+      const events = await EventModel.find({ invitationId });
+      return events;
+   } catch (error) {
+      console.error("Error getting events by invitation id:", error);
+      throw error;
+   }
+};
+export const deleteEventById = async (id: string) => {
+   try {
+      const event = await EventModel.findOneAndDelete({ id });
+      return event;
+   } catch (error) {
+      console.error("Error deleting event by id:", error);
+      throw error;
+   }
+};
 
 // guest
 const GuestSchema = new mongoose.Schema({

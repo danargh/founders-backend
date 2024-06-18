@@ -1,5 +1,16 @@
 import express from "express";
-import { postInvitation, getInvitations, getInvitationById, getGroomByInvitationId, updateGroom, getBrideByInvitationId, updateBride } from "../controllers/invitation";
+import {
+   postInvitation,
+   getInvitations,
+   getInvitationById,
+   getGroomByInvitationId,
+   updateGroom,
+   getBrideByInvitationId,
+   updateBride,
+   updateEvent,
+   createEventByInvitationId,
+   getEventByInvitationId,
+} from "../controllers/invitation";
 import { authJwtMiddleware } from "../middlewares";
 
 export default (router: express.Router) => {
@@ -15,4 +26,9 @@ export default (router: express.Router) => {
    // bride
    router.get("/bride/:invitationId", authJwtMiddleware, getBrideByInvitationId);
    router.put("/bride/:invitationId", authJwtMiddleware, updateBride);
+
+   // event
+   router.put("/event/:id", authJwtMiddleware, updateEvent);
+   router.post("/event/:invitationId", authJwtMiddleware, createEventByInvitationId);
+   router.get("/event/:invitationId", authJwtMiddleware, getEventByInvitationId);
 };

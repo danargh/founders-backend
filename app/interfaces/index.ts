@@ -75,10 +75,13 @@ export interface Bride {
    socialMedia: Record<string, string> | null;
 }
 export interface Event {
+   id: string;
+   invitationId: string;
    category: string;
    title: string;
-   startTime: Date;
-   endTime: Date;
+   date: Date;
+   startTime: string;
+   endTime: string;
    timezone: string;
    place: string;
    address: string;

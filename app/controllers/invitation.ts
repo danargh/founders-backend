@@ -7,6 +7,10 @@ import {
    updateGroomService,
    getBrideByInvitationIdService,
    updateBrideService,
+   updtateEventService,
+   createEventByInvitationIdService,
+   getEventByInvitationIdService,
+   deleteEventByIdService,
 } from "../services/invitation";
 import { NextFunction } from "express";
 import { Invitation } from "interfaces";
@@ -159,6 +163,100 @@ export const updateBride = async (req: express.Request, res: express.Response, n
             address: updatedBride.address,
             photo: updatedBride.photo,
             socialMedia: updatedBride.socialMedia,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+
+// Event
+export const updateEvent = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { updatedInvitation } = await updtateEventService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Update event successfull!",
+         data: {
+            id: updatedInvitation._id,
+            category: updatedInvitation.category,
+            title: updatedInvitation.title,
+            date: updatedInvitation.date,
+            startTime: updatedInvitation.startTime,
+            endTime: updatedInvitation.endTime,
+            timezone: updatedInvitation.timezone,
+            place: updatedInvitation.place,
+            address: updatedInvitation.address,
+            googleMapsUrl: updatedInvitation.googleMapsUrl,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const createEventByInvitationId = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { createdEvent } = await createEventByInvitationIdService(req);
+      return res.status(201).json({
+         status: "Success",
+         message: "Create event successfull!",
+         data: {
+            id: createdEvent._id,
+            category: createdEvent.category,
+            title: createdEvent.title,
+            date: createdEvent.date,
+            startTime: createdEvent.startTime,
+            endTime: createdEvent.endTime,
+            timezone: createdEvent.timezone,
+            place: createdEvent.place,
+            address: createdEvent.address,
+            googleMapsUrl: createdEvent.googleMapsUrl,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const getEventByInvitationId = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { event } = await getEventByInvitationIdService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Get event successfull!",
+         data: event.map((event: any) => ({
+            id: event._id,
+            category: event.category,
+            title: event.title,
+            date: event.date,
+            startTime: event.startTime,
+            endTime: event.endTime,
+            timezone: event.timezone,
+            place: event.place,
+            address: event.address,
+            googleMapsUrl: event.googleMapsUrl,
+         })),
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const deleteEventById = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { deletedEvent } = await deleteEventByIdService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Delete event successfull!",
+         data: {
+            id: deletedEvent._id,
+            category: deletedEvent.category,
+            title: deletedEvent.title,
+            date: deletedEvent.date,
+            startTime: deletedEvent.startTime,
+            endTime: deletedEvent.endTime,
+            timezone: deletedEvent.timezone,
+            place: deletedEvent.place,
+            address: deletedEvent.address,
+            googleMapsUrl: deletedEvent.googleMapsUrl,
          },
       });
    } catch (error) {

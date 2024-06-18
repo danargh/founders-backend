@@ -1,5 +1,5 @@
-import { getInvitationByUserId, getInvitationById, getGroomByInvitationId, getBrideByInvitationId, updateBride } from "./../models/invitations";
-import { createInvitation, updateGroom } from "../models/invitations";
+import { getInvitationByUserId, getInvitationById, getGroomByInvitationId, getBrideByInvitationId, updateBride, updateEvent, getEventsByInvitationId } from "./../models/invitations";
+import { createInvitation, updateGroom, createEventByInvitationId, deleteEventById } from "../models/invitations";
 import express from "express";
 import { getIdentifier } from "../helpers/index";
 import { Identifier } from "../interfaces/index";
@@ -68,4 +68,36 @@ export const updateBrideService = async (req: express.Request) => {
    const updatedBride = await updateBride(invitationId, requestData);
 
    return { updatedBride };
+};
+
+// invitation
+export const updtateEventService = async (req: express.Request) => {
+   const { id } = req.params;
+   const requestData = req.body;
+
+   const updatedInvitation = await updateEvent(id, requestData);
+
+   return { updatedInvitation };
+};
+export const createEventByInvitationIdService = async (req: express.Request) => {
+   const { invitationId } = req.params;
+   const requestData = req.body;
+
+   const createdEvent = await createEventByInvitationId(invitationId, requestData);
+
+   return { createdEvent };
+};
+export const getEventByInvitationIdService = async (req: express.Request) => {
+   const { invitationId } = req.params;
+
+   const event = await getEventsByInvitationId(invitationId);
+
+   return { event };
+};
+export const deleteEventByIdService = async (req: express.Request) => {
+   const { id } = req.params;
+
+   const deletedEvent = await deleteEventById(id);
+
+   return { deletedEvent };
 };
