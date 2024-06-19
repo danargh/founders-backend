@@ -10,6 +10,7 @@ import {
    updateEvent,
    createEventByInvitationId,
    getEventByInvitationId,
+   deleteEventById,
 } from "../controllers/invitation";
 import { authJwtMiddleware } from "../middlewares";
 
@@ -31,4 +32,5 @@ export default (router: express.Router) => {
    router.put("/event/:id", authJwtMiddleware, updateEvent);
    router.post("/event/:invitationId", authJwtMiddleware, createEventByInvitationId);
    router.get("/event/:invitationId", authJwtMiddleware, getEventByInvitationId);
+   router.delete("/event/:id", authJwtMiddleware, deleteEventById);
 };

@@ -179,6 +179,7 @@ export const updateEvent = async (req: express.Request, res: express.Response, n
          message: "Update event successfull!",
          data: {
             id: updatedInvitation._id,
+            invitationId: updatedInvitation.invitationId,
             category: updatedInvitation.category,
             title: updatedInvitation.title,
             date: updatedInvitation.date,
@@ -202,6 +203,7 @@ export const createEventByInvitationId = async (req: express.Request, res: expre
          message: "Create event successfull!",
          data: {
             id: createdEvent._id,
+            invitationId: createdEvent.invitationId,
             category: createdEvent.category,
             title: createdEvent.title,
             date: createdEvent.date,
@@ -225,6 +227,7 @@ export const getEventByInvitationId = async (req: express.Request, res: express.
          message: "Get event successfull!",
          data: event.map((event: any) => ({
             id: event._id,
+            invitationId: event.invitationId,
             category: event.category,
             title: event.title,
             date: event.date,
@@ -248,6 +251,7 @@ export const deleteEventById = async (req: express.Request, res: express.Respons
          message: "Delete event successfull!",
          data: {
             id: deletedEvent._id,
+            invitationId: deletedEvent.invitationId,
             category: deletedEvent.category,
             title: deletedEvent.title,
             date: deletedEvent.date,

@@ -134,7 +134,7 @@ const EventSchema = new mongoose.Schema({
 export const EventModel = mongoose.model("Event", EventSchema);
 export const updateEvent = async (id: string, values: Record<string, any>) => {
    try {
-      const event = await EventModel.findOneAndUpdate({ id }, values, { new: true, upsert: true, runValidators: true });
+      const event = await EventModel.findOneAndUpdate({ _id: id }, values, { new: true, upsert: true, runValidators: true });
       return event;
    } catch (error) {
       console.error("Error updating event:", error);
@@ -162,7 +162,7 @@ export const getEventsByInvitationId = async (invitationId: string) => {
 };
 export const deleteEventById = async (id: string) => {
    try {
-      const event = await EventModel.findOneAndDelete({ id });
+      const event = await EventModel.findOneAndDelete({ _id: id });
       return event;
    } catch (error) {
       console.error("Error deleting event by id:", error);
