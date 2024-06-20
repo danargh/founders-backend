@@ -76,7 +76,7 @@ export interface Bride {
 }
 export interface Event {
    id: string;
-   invitationId: string;
+   invitationId: Types.ObjectId | Invitation;
    category: string;
    title: string;
    date: Date;
@@ -88,6 +88,9 @@ export interface Event {
    googleMapsUrl: string;
 }
 export interface Guest {
+   invitationId: Types.ObjectId | Invitation;
    fullName: string;
+   address: string;
    category: string;
+   status: string;
 }

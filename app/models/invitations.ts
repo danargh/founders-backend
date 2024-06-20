@@ -172,13 +172,50 @@ export const deleteEventById = async (id: string) => {
 
 // guest
 const GuestSchema = new mongoose.Schema({
+   invitationId: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation", required: true },
    fullName: { type: String, required: true },
    category: { type: String, required: true },
-   quote: { type: String, required: true },
-   quoteDate: { type: Date, required: true },
+   status: { type: String, required: true },
+   address: { type: String, required: true },
 });
-
 export const GuestModel = mongoose.model("Guest", GuestSchema);
+export const createGuestByInvitationId = async (invitationId: string, values: Record<string, any>) => {
+   try {
+      const guest = new GuestModel({ ...values, invitationId });
+      await guest.save();
+      return guest;
+   } catch (error) {
+      console.error("Error creating guest by invitation id:", error);
+      throw error;
+   }
+};
+export const getGuestsByInvitationId = async (invitationId: string) => {
+   try {
+      const guests = await GuestModel.find({ invitationId });
+      return guests;
+   } catch (error) {
+      console.error("Error getting guests by invitation id:", error);
+      throw error;
+   }
+};
+export const updateGuest = async (id: string, values: Record<string, any>) => {
+   try {
+      const guest = await GuestModel.findOneAndUpdate({ _id: id }, values, { new: true, upsert: true, runValidators: true });
+      return guest;
+   } catch (error) {
+      console.error("Error updating guest:", error);
+      throw error;
+   }
+};
+export const deleteGuestById = async (id: string) => {
+   try {
+      const guest = await GuestModel.findOneAndDelete({ _id: id });
+      return guest;
+   } catch (error) {
+      console.error("Error deleting guest by id:", error);
+      throw error;
+   }
+};
 
 // gallery
 const GallerySchema = new mongoose.Schema({

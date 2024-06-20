@@ -1,4 +1,16 @@
-import { getInvitationByUserId, getInvitationById, getGroomByInvitationId, getBrideByInvitationId, updateBride, updateEvent, getEventsByInvitationId } from "./../models/invitations";
+import {
+   getInvitationByUserId,
+   getInvitationById,
+   getGroomByInvitationId,
+   getBrideByInvitationId,
+   updateBride,
+   updateEvent,
+   getEventsByInvitationId,
+   createGuestByInvitationId,
+   getGuestsByInvitationId,
+   updateGuest,
+   deleteGuestById,
+} from "./../models/invitations";
 import { createInvitation, updateGroom, createEventByInvitationId, deleteEventById } from "../models/invitations";
 import express from "express";
 import { getIdentifier } from "../helpers/index";
@@ -70,7 +82,7 @@ export const updateBrideService = async (req: express.Request) => {
    return { updatedBride };
 };
 
-// invitation
+// Event
 export const updtateEventService = async (req: express.Request) => {
    const { id } = req.params;
    const requestData = req.body;
@@ -100,4 +112,36 @@ export const deleteEventByIdService = async (req: express.Request) => {
    const deletedEvent = await deleteEventById(id);
 
    return { deletedEvent };
+};
+
+// Guest
+export const createGuestService = async (req: express.Request) => {
+   const { invitationId } = req.params;
+   const requestData = req.body;
+
+   const createdGuest = await createGuestByInvitationId(invitationId, requestData);
+
+   return { createdGuest };
+};
+export const getGuestByInvitationIdService = async (req: express.Request) => {
+   const { invitationId } = req.params;
+
+   const guest = await getGuestsByInvitationId(invitationId);
+
+   return { guest };
+};
+export const updateGuestService = async (req: express.Request) => {
+   const { id } = req.params;
+   const requestData = req.body;
+
+   const updatedGuest = await updateGuest(id, requestData);
+
+   return { updatedGuest };
+};
+export const deleteGuestByIdService = async (req: express.Request) => {
+   const { id } = req.params;
+
+   const deletedGuest = await deleteGuestById(id);
+
+   return { deletedGuest };
 };

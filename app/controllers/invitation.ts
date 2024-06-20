@@ -11,6 +11,10 @@ import {
    createEventByInvitationIdService,
    getEventByInvitationIdService,
    deleteEventByIdService,
+   createGuestService,
+   getGuestByInvitationIdService,
+   updateGuestService,
+   deleteGuestByIdService,
 } from "../services/invitation";
 import { NextFunction } from "express";
 import { Invitation } from "interfaces";
@@ -261,6 +265,84 @@ export const deleteEventById = async (req: express.Request, res: express.Respons
             place: deletedEvent.place,
             address: deletedEvent.address,
             googleMapsUrl: deletedEvent.googleMapsUrl,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+
+// Guest
+export const createGuest = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { createdGuest } = await createGuestService(req);
+      return res.status(201).json({
+         status: "Success",
+         message: "Create guest successfull!",
+         data: {
+            id: createdGuest._id,
+            invitationId: createdGuest.invitationId,
+            fullName: createdGuest.fullName,
+            address: createdGuest.address,
+            category: createdGuest.category,
+            status: createdGuest.status,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const getGuestByInvitationId = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { guest } = await getGuestByInvitationIdService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Get guest successfull!",
+         data: guest.map((guest: any) => ({
+            id: guest._id,
+            invitationId: guest.invitationId,
+            fullName: guest.fullName,
+            address: guest.address,
+            category: guest.category,
+            status: guest.status,
+         })),
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const updateGuest = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { updatedGuest } = await updateGuestService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Update guest successfull!",
+         data: {
+            id: updatedGuest._id,
+            invitationId: updatedGuest.invitationId,
+            fullName: updatedGuest.fullName,
+            address: updatedGuest.address,
+            category: updatedGuest.category,
+            status: updatedGuest.status,
+         },
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+export const deleteGuestById = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { deletedGuest } = await deleteGuestByIdService(req);
+      return res.status(200).json({
+         status: "Success",
+         message: "Delete guest successfull!",
+         data: {
+            id: deletedGuest._id,
+            invitationId: deletedGuest.invitationId,
+            fullName: deletedGuest.fullName,
+            address: deletedGuest.address,
+            category: deletedGuest.category,
+            status: deletedGuest.status,
          },
       });
    } catch (error) {

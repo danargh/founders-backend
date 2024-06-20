@@ -11,6 +11,10 @@ import {
    createEventByInvitationId,
    getEventByInvitationId,
    deleteEventById,
+   createGuest,
+   getGuestByInvitationId,
+   updateGuest,
+   deleteGuestById,
 } from "../controllers/invitation";
 import { authJwtMiddleware } from "../middlewares";
 
@@ -33,4 +37,10 @@ export default (router: express.Router) => {
    router.post("/event/:invitationId", authJwtMiddleware, createEventByInvitationId);
    router.get("/event/:invitationId", authJwtMiddleware, getEventByInvitationId);
    router.delete("/event/:id", authJwtMiddleware, deleteEventById);
+
+   // guest
+   router.post("/guest/:invitationId", authJwtMiddleware, createGuest);
+   router.get("/guest/:invitationId", authJwtMiddleware, getGuestByInvitationId);
+   router.put("/guest/:id", authJwtMiddleware, updateGuest);
+   router.delete("/guest/:id", authJwtMiddleware, deleteGuestById);
 };
