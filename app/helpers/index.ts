@@ -19,19 +19,15 @@ export const generateToken = async (payload: any): Promise<any> => {
    return { expiresIn, token };
 };
 
-export const ifTokenExpired = async (token: string): Promise<boolean> => {
-   // const secret = config.JWT_SECRET as string;
-   const [, payload] = token.split(".");
-   const decodedPayload = JSON.parse(atob(payload));
-   const exp = decodedPayload.exp * 1000; // Convert to milliseconds
-   return Date.now() >= exp;
+export const generateRefreshToken = async (payload: any): Promise<string> => {
+   const refreshToken: string = jwt.sign(payload, config.JWT_SECRET, { expiresIn: "1d" });
+   return refreshToken;
 };
-
-export const refreshToken = async (token: string): Promise<string> => {
+export const verifyRefreshToken = async (token: string): Promise<string> => {
    const secret = config.JWT_SECRET as string;
    const decodedToken = jwt.verify(token, secret) as Identifier;
-   const newToken = jwt.sign({ id: decodedToken.id }, secret, { expiresIn: "2h" });
-   return newToken;
+   const refreshToken = jwt.sign({ id: decodedToken.id }, secret, { expiresIn: "1d" });
+   return refreshToken;
 };
 
 export const getWibDate = async (input: Date): Promise<Date> => {

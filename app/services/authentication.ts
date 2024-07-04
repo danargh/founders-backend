@@ -1,17 +1,52 @@
 import { validate, loginValidation, registerValidation } from "../utils/Validation.utils";
 import express from "express";
-import { getUserByEmail } from "../models/users";
+import { findOrCreateUser, getUserByEmail } from "../models/users";
 import { ErrorException } from "../utils/Error.utils";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { createUser } from "../models/users";
-import { encryptPassword, generateToken, refreshToken } from "../helpers";
+import { encryptPassword, generateRefreshToken, generateToken } from "../helpers";
 import { Identifier, User } from "interfaces";
+import { google } from "googleapis";
+
+const OAuth2 = google.auth.OAuth2;
+const oauth2Client = new OAuth2(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET, config.GOOGLE_REDIRECT_URI);
+
+const scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"];
+
+export const googleUrl = oauth2Client.generateAuthUrl({
+   access_type: "offline",
+   scope: scopes,
+   include_granted_scopes: true,
+   response_type: "code",
+});
+
+export const loginGoogleService = async (req: express.Request) => {
+   const code = req.query.code as string;
+   const { tokens } = await oauth2Client.getToken(code);
+   oauth2Client.setCredentials(tokens);
+
+   const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
+   const { data } = await oauth2.userinfo.get();
+
+   const user = await findOrCreateUser(data.email, data.name);
+
+   const payload: Identifier = {
+      _id: user._id as unknown as string,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+   };
+
+   const { token, expiresIn } = await generateToken(payload);
+   const refreshToken = await generateRefreshToken(payload);
+
+   return { user, token, refreshToken, expiresIn };
+};
 
 export const loginService = async (req: express.Request) => {
    validate(loginValidation, req.body);
-   const requestToken = req.headers.authorization?.replace("Bearer ", "");
 
    const user = await getUserByEmail(req.body.email);
    if (!user) throw new ErrorException(400, "User not found", "Email or password is incorrect");
@@ -25,17 +60,11 @@ export const loginService = async (req: express.Request) => {
       email: user.email,
       role: user.role,
    };
-   let token;
-   let expiresIn;
 
-   if (requestToken) {
-      token = refreshToken(requestToken);
-   } else {
-      const result = await generateToken(payload);
-      token = result.token;
-      expiresIn = result.expiresIn;
-   }
-   return { user, token, expiresIn };
+   const { token, expiresIn } = await generateToken(payload);
+   const refreshToken = await generateRefreshToken(payload);
+
+   return { user, token, expiresIn, refreshToken };
 };
 
 export const registerService = async (req: express.Request) => {
@@ -60,7 +89,8 @@ export const registerService = async (req: express.Request) => {
       role: createdUser.role,
    };
    const { token, expiresIn } = await generateToken(payload);
-   return { createdUser, token, expiresIn };
+   const refreshToken = await generateRefreshToken(payload);
+   return { createdUser, token, expiresIn, refreshToken };
 };
 
 export const validateTokenService = async (req: express.Request, res: express.Response) => {

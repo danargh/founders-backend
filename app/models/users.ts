@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
    username: { type: String, required: true, unique: true },
    email: { type: String, required: true, unique: true },
-   password: { type: String, required: true },
+   password: { type: String },
    role: { type: String, required: true, default: "user" },
-   phone: { type: String, required: true },
+   phone: { type: String, required: false },
    isVerified: { type: Boolean, default: false },
    createdAt: { type: Date, default: Date.now },
    membership: { type: String, required: true, default: "free" },
@@ -44,6 +44,12 @@ export const deleteUserByEmail = async (email: string) => {
 };
 export const updateUserById = async (id: string, values: Record<string, any>) => {
    return await UserModel.findByIdAndUpdate(id, values, { new: true }).exec();
+};
+export const findOrCreateUser = async (email: string, username: string) => {
+   return UserModel.findOne({ email }).then((user: any) => {
+      if (user) return user.toObject();
+      return createUser({ email, username });
+   });
 };
 export const createVerificationOTP = async (id: string, otp: string) => {
    return await UserModel.findByIdAndUpdate(id, { OTPcode: otp, OTPcreatedAt: new Date() }, { new: true }).exec();

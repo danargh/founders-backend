@@ -1,7 +1,7 @@
 import request from "supertest";
-import app from "../index";
-import { closeDBTesting, connectDBTesting } from "./test.utils";
-import { deleteUserByEmail } from "../models/users";
+import app from "../../index";
+import { closeDBTesting, connectDBTesting } from "../test.utils";
+import { deleteUserByEmail } from "../../models/users";
 
 // auth login
 describe("Login /auth/login", () => {
@@ -15,7 +15,7 @@ describe("Login /auth/login", () => {
    // success case
    test("It should return 200 and a token", async () => {
       const response = await request(app).post("/auth/login").send({
-         email: "danar06@gmail.com",
+         email: "danargh06@gmail.com",
          password: "12345678",
       });
       expect(response.status).toBe(200);
@@ -27,7 +27,7 @@ describe("Login /auth/login", () => {
 describe("Register /auth/register", () => {
    beforeAll(async () => {
       await connectDBTesting();
-      await deleteUserByEmail("danar06@gmail.com");
+      await deleteUserByEmail("danargh86@gmail.com");
    });
    afterAll(async () => {
       await closeDBTesting();
@@ -36,12 +36,10 @@ describe("Register /auth/register", () => {
    // success case
    test("It should return 200 and a token", async () => {
       const response = await request(app).post("/auth/register").send({
-         email: "danar06@gmail.com",
+         email: "danargh86@gmail.com",
          username: "danargh",
          password: "12345678",
-         femaleName: "Tunarsih",
-         maleName: "Sobirin",
-         websiteUrl: "https://polokrami.com",
+         repeatPassword: "12345678",
          phone: "08123456789",
          terms: true,
       });

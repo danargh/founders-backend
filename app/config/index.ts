@@ -11,6 +11,9 @@ interface Config {
    BASE_URL: string;
    JWT_SECRET: string;
    JWT_SESSION: JwtSession;
+   GOOGLE_CLIENT_ID: string;
+   GOOGLE_CLIENT_SECRET: string;
+   GOOGLE_REDIRECT_URI: string;
    EMAIL_HOST: string;
    EMAIL_USER: string;
    EMAIL_PASS: string;
@@ -30,6 +33,9 @@ const config: Config = {
    BASE_URL: process.env.BASE_URL as string,
    JWT_SECRET: process.env.JWT_SECRET as string,
    JWT_SESSION: { session: false },
+   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
+   GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI as string,
    EMAIL_HOST: process.env.EMAIL_HOST as string,
    EMAIL_USER: process.env.EMAIL_USER as string,
    EMAIL_PASS: process.env.EMAIL_PASS as string,
