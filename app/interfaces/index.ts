@@ -34,8 +34,11 @@ export interface User {
 
 // session
 export interface Session {
-   userId: string;
-   token: string;
+   _id: string;
+   userId: Types.ObjectId | User;
+   refreshToken: string;
+   userAgent: string;
+   ipAddress: string;
    createdAt: Date;
 }
 

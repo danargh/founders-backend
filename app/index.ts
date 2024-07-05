@@ -32,6 +32,9 @@ app.use("/", router());
 // init error middleware
 app.use(errorMiddleware);
 
+// get user ip
+app.set("trust proxy", true);
+
 // init swagger?
 
 export default app;

@@ -1,5 +1,5 @@
 import express, { NextFunction } from "express";
-import { loginService, registerService, validateTokenService, loginGoogleService } from "../services/authentication";
+import { loginService, registerService, validateTokenService, loginGoogleService, logoutService } from "../services/authentication";
 import { createUser } from "models/users";
 import { getExpiresDate } from "../helpers";
 
@@ -7,27 +7,10 @@ export const loginGoogle = async (req: express.Request, res: express.Response, n
    try {
       const { user, token, expiresIn, refreshToken } = await loginGoogleService(req);
 
-      return (
-         res
-            .status(200)
-            .cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", path: "/" })
-            // .json({
-            //    status: "Success",
-            //    message: "Login successful",
-            //    data: {
-            //       id: user._id,
-            //       email: user.email,
-            //       username: user.username,
-            //       phone: user.phone,
-            //       createdAt: user.createdAt,
-            //       auth: { token: token, expiresIn: await getExpiresDate(expiresIn) },
-            //       role: user.role,
-            //       membership: user.membership,
-            //       isVerified: user.isVerified,
-            //    },
-            // })
-            .redirect(`http://localhost:3000/auth-success?userToken=${token}&refreshToken=${refreshToken}`)
-      );
+      return res
+         .status(200)
+         .cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", path: "/" })
+         .redirect(`http://localhost:3000/auth-success?userToken=${token}&refreshToken=${refreshToken}`);
    } catch (error) {
       next(error);
    }
@@ -39,7 +22,7 @@ export const login = async (req: express.Request, res: express.Response, next: e
 
       return res
          .status(200)
-         .cookie("refreshToken", refreshToken)
+         .cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", path: "/" })
          .json({
             status: "Success",
             message: "Login successful",
@@ -55,6 +38,18 @@ export const login = async (req: express.Request, res: express.Response, next: e
                isVerified: user.isVerified,
             },
          });
+   } catch (error) {
+      next(error);
+   }
+};
+
+export const logout = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+   try {
+      await logoutService(req, res);
+      return res.status(200).clearCookie("refreshToken").json({
+         status: "Success",
+         message: "Logout successful",
+      });
    } catch (error) {
       next(error);
    }
