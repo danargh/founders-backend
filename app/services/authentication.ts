@@ -1,5 +1,5 @@
 import { validate, loginValidation, registerValidation } from "../utils/Validation.utils";
-import express from "express";
+import express, { NextFunction } from "express";
 import { findOrCreateUser, getUserByEmail } from "../models/users";
 import { ErrorException } from "../utils/Error.utils";
 import bcrypt from "bcrypt";
@@ -117,19 +117,34 @@ export const registerService = async (req: express.Request) => {
    return { createdUser, token, expiresIn, refreshToken };
 };
 
-export const validateTokenService = async (req: express.Request, res: express.Response) => {
-   const token = req.headers.authorization?.replace("Bearer ", "");
-   if (!token) throw new ErrorException(401, "Unauthorized");
+export const validateTokenService = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   const { authorization } = req.headers;
+   const cookies = req.cookies;
+
+   let token = authorization;
+   let refreshToken = cookies.refreshToken;
+
+   if (!token) {
+      throw new ErrorException(401, "Unauthorized");
+   }
+   if (!refreshToken) {
+      throw new ErrorException(401, "Unauthorized");
+   }
+
+   token = token.replace("Bearer ", "");
+   refreshToken = refreshToken.replace("Bearer ", "");
 
    const secret = config.JWT_SECRET as string;
+
+   const dbRefreshToken = getSessionByRefreshToken(refreshToken);
+   if (!dbRefreshToken) {
+      throw new ErrorException(401, "Unauthorized");
+   }
 
    let email;
    jwt.verify(token, secret, async (err, decoded) => {
       if (err) {
-         if (err.name === "TokenExpiredError") {
-            throw new ErrorException(401, "Token Expired", "Token Expired");
-         }
-         throw new ErrorException(400, err.message, err.message);
+         throw new ErrorException(401, err.message);
       } else {
          email = (decoded as jwt.JwtPayload).email;
          return decoded;

@@ -85,7 +85,7 @@ export const register = async (req: express.Request, res: express.Response, next
 
 export const validateToken = async (req: express.Request, res: express.Response, next: NextFunction) => {
    try {
-      const user = await validateTokenService(req, res);
+      const user = await validateTokenService(req, res, next);
       return res.status(200).json({
          status: "Success",
          data: {
