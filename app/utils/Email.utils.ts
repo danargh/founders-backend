@@ -9,7 +9,6 @@ const sendMail = async (email: string, subject: string, message: string) => {
          host: config.EMAIL_HOST,
          port: 587,
          service: config.EMAIL_SERVICE,
-         secure: true,
          auth: {
             user: config.EMAIL_USER,
             pass: config.EMAIL_PASS,
@@ -25,8 +24,8 @@ const sendMail = async (email: string, subject: string, message: string) => {
 
       logger.info(`Email successfully sent to ${email}`);
    } catch (error) {
-      logger.info(`Email failed send to ${email}`);
-      throw new ErrorException(500, "Internal server error");
+      logger.info(`Email failed send to ${config.EMAIL_PASS} : ${error}`);
+      throw new ErrorException(500, error, "Internal server error");
    }
 };
 

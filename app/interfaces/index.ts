@@ -30,6 +30,8 @@ export interface User {
    createdAt: Date;
    membership: string;
    invitations: Types.ObjectId | Invitation[];
+   OTPCode: string;
+   OTPCreatedAt: Date;
 }
 
 // session

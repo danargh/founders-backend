@@ -2,8 +2,10 @@ import express, { NextFunction } from "express";
 import { getAllUsersService, deleteUserService, updateUserService, sendEmailService, getUserService } from "../services/user";
 import { UserData } from "../interfaces";
 import { verifyEmailService } from "../services/user";
+import { getIdentifier } from "../helpers";
+import { Identifier } from "../interfaces";
 
-export const getUser = async (req: UserData, res: express.Response, next: express.NextFunction) => {
+export const getUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
    try {
       const { user } = await getUserService(req);
       return res.status(200).json({
@@ -25,9 +27,10 @@ export const getUser = async (req: UserData, res: express.Response, next: expres
    }
 };
 
-export const getAllUsers = async (req: UserData, res: express.Response, next: express.NextFunction) => {
+export const getAllUsers = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
    try {
-      const { users } = await getAllUsersService(req.userData.role);
+      const { users } = await getAllUsersService(identifier.role);
       return res.status(200).json({
          status: "Success",
          message: "Get users successfull!",
@@ -46,10 +49,11 @@ export const getAllUsers = async (req: UserData, res: express.Response, next: ex
    }
 };
 
-export const deleteUser = async (req: UserData, res: express.Response, next: NextFunction) => {
+export const deleteUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
    try {
       const { id } = req.params;
-      const { deletedUser } = await deleteUserService(id, req.userData.id, req.userData.role);
+      const { deletedUser } = await deleteUserService(id, identifier._id, identifier.role);
       return res.status(200).json({
          status: "Success",
          message: "Delete user successfull!",
@@ -65,10 +69,11 @@ export const deleteUser = async (req: UserData, res: express.Response, next: Nex
    }
 };
 
-export const updateUser = async (req: UserData, res: express.Response, next: NextFunction) => {
+export const updateUser = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
    try {
       const { id } = req.params;
-      const { updatedUser } = await updateUserService(id, req.userData.id, req.userData.role, req.body);
+      const { updatedUser } = await updateUserService(id, identifier._id, identifier.role, req.body);
 
       return res.status(200).json({
          status: "Success",
@@ -85,16 +90,17 @@ export const updateUser = async (req: UserData, res: express.Response, next: Nex
    }
 };
 
-export const sendEmail = async (req: UserData, res: express.Response, next: NextFunction) => {
+export const sendEmail = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
    try {
-      const { user } = await sendEmailService(req.userData.email);
+      const { envelope } = await sendEmailService(identifier.email);
 
       return res.status(200).json({
          status: "Success",
          message: "Email sent!",
          data: {
-            email: user.email,
-            createdAt: user.createdAt,
+            emailFrom: envelope.from,
+            emailTo: envelope.to,
          },
       });
    } catch (error) {
@@ -102,10 +108,11 @@ export const sendEmail = async (req: UserData, res: express.Response, next: Next
    }
 };
 
-export const verifyEmail = async (req: UserData, res: express.Response, next: NextFunction) => {
+export const verifyEmail = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   const identifier: Identifier = await getIdentifier(req.headers.authorization?.replace("Bearer ", ""));
    try {
       const { otp } = req.body;
-      const { verifiedUser } = await verifyEmailService(otp, req.userData.email);
+      const { verifiedUser } = await verifyEmailService(otp as string, identifier.email as string);
 
       return res.status(200).json({
          status: "Success",

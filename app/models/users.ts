@@ -13,13 +13,7 @@ const UserSchema = new mongoose.Schema({
    invitations: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation" },
 
    OTPcode: { type: String },
-   OTPcreatedAt: { type: Date },
-});
-
-const SessionSchema = new mongoose.Schema({
-   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-   token: { type: String, required: true },
-   createdAt: { type: Date, default: Date.now },
+   OTPCreatedAt: { type: Date },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
@@ -51,9 +45,9 @@ export const findOrCreateUser = async (email: string, username: string) => {
       return createUser({ email, username });
    });
 };
-export const createVerificationOTP = async (id: string, otp: string) => {
-   return await UserModel.findByIdAndUpdate(id, { OTPcode: otp, OTPcreatedAt: new Date() }, { new: true }).exec();
+export const createVerificationOTP = async (email: string, otp: string) => {
+   return await UserModel.findOneAndUpdate({ email }, { OTPcode: otp, OTPCreatedAt: new Date() }, { new: true }).exec();
 };
-export const updateIsVerified = async (id: string) => {
-   return await UserModel.findByIdAndUpdate(id, { isVerified: true }, { new: true }).exec();
+export const updateIsVerified = async (email: string) => {
+   return await UserModel.findOneAndUpdate({ email }, { isVerified: true, OTPcode: null, OTPCreatedAt: null }, { new: true }).exec();
 };

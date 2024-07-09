@@ -42,7 +42,6 @@
       "googleapis": "^140.0.1",
       "joi": "^17.11.0",
       "jsonwebtoken": "^9.0.2",
-      "lodash": "^4.17.21",
       "mongoose": "^8.0.3",
       "nodemailer": "^6.9.13",
       "winston": "^3.11.0"

@@ -6,6 +6,7 @@ import { Identifier, UserData } from "../interfaces";
 import { ErrorException } from "../utils/Error.utils";
 import logger from "../utils/Logger.utils";
 import { getSessionByRefreshToken } from "../models/auth";
+import { generateToken, verifyToken } from "../helpers";
 
 export const authJwtMiddleware = async (req: UserData, res: express.Response, next: express.NextFunction) => {
    const { authorization } = req.headers;
@@ -33,11 +34,15 @@ export const authJwtMiddleware = async (req: UserData, res: express.Response, ne
 
    try {
       const secret = config.JWT_SECRET as string;
-      jwt.verify(token, secret, (err, decoded) => {
+      jwt.verify(token, secret, async (err, decoded: jwt.JwtPayload) => {
          if (err) {
             throw new ErrorException(401, err.message);
          }
-         req.userData = decoded;
+         // if expired
+         if (decoded.exp < Date.now().valueOf() / 1000) {
+            const newToken = await generateToken(decoded);
+            req.headers.authorization = `Bearer ${newToken.token}`;
+         }
          next();
       });
    } catch (error) {

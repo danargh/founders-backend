@@ -18,6 +18,9 @@ interface Config {
    EMAIL_USER: string;
    EMAIL_PASS: string;
    EMAIL_SERVICE: string;
+
+   OAUTH_EMAIL_FROM: string;
+   OAUTH_REFRESH_TOKEN: string;
 }
 
 interface JwtSession {
@@ -40,6 +43,8 @@ const config: Config = {
    EMAIL_USER: process.env.EMAIL_USER as string,
    EMAIL_PASS: process.env.EMAIL_PASS as string,
    EMAIL_SERVICE: process.env.EMAIL_SERVICE as string,
+   OAUTH_EMAIL_FROM: process.env.OAUTH_EMAIL_FROM as string,
+   OAUTH_REFRESH_TOKEN: process.env.OAUTH_REFRESH_TOKEN as string,
 };
 
 export default config;

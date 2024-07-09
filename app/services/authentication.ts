@@ -10,6 +10,7 @@ import { encryptPassword, generateRefreshToken, generateToken } from "../helpers
 import { Identifier, User } from "interfaces";
 import { google } from "googleapis";
 import { createSession, deleteSession, getSessionByRefreshToken } from "../models/auth";
+import sendMail from "utils/Email.utils";
 
 // login with google
 const OAuth2 = google.auth.OAuth2;
