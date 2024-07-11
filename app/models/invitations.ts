@@ -219,11 +219,16 @@ export const deleteGuestById = async (id: string) => {
 
 // gallery
 const GallerySchema = new mongoose.Schema({
-   images: { type: Array, required: true },
+   invitationId: { type: mongoose.Schema.Types.ObjectId, ref: "Invitation", required: true },
+   images: [
+      {
+         url: { type: String, required: true },
+         section: { type: String, required: true },
+      },
+   ],
    music: { type: String, required: true },
    video: { type: String, required: true },
 });
-
 export const GalleryModel = mongoose.model("Gallery", GallerySchema);
 
 // quote

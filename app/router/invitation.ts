@@ -15,8 +15,9 @@ import {
    getGuestByInvitationId,
    updateGuest,
    deleteGuestById,
+   uploadGallery,
 } from "../controllers/invitation";
-import { authJwtMiddleware } from "../middlewares";
+import { authJwtMiddleware, cloudinaryMiddleware } from "../middlewares";
 
 export default (router: express.Router) => {
    // general
@@ -43,4 +44,7 @@ export default (router: express.Router) => {
    router.get("/guest/:invitationId", authJwtMiddleware, getGuestByInvitationId);
    router.put("/guest/:id", authJwtMiddleware, updateGuest);
    router.delete("/guest/:id", authJwtMiddleware, deleteGuestById);
+
+   // gallery
+   router.post("gallery/upload", cloudinaryMiddleware, uploadGallery);
 };

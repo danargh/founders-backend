@@ -1,6 +1,3 @@
-import express from "express";
-import logger from "./Logger.utils";
-
 export class ErrorException extends Error {
    public status: number;
    public message: string;

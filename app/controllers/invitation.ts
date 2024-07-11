@@ -18,6 +18,7 @@ import {
 } from "../services/invitation";
 import { NextFunction } from "express";
 import { Invitation } from "interfaces";
+import { ErrorException } from "../utils/Error.utils";
 
 // Invitation
 export const postInvitation = async (req: express.Request, res: express.Response, next: NextFunction) => {
@@ -347,5 +348,32 @@ export const deleteGuestById = async (req: express.Request, res: express.Respons
       });
    } catch (error) {
       next(error);
+   }
+};
+
+// Gallery
+export const uploadGallery = async (req: express.Request, res: express.Response, next: NextFunction) => {
+   try {
+      const { cloudinaryUrls } = req.body;
+      return res.status(200).json({
+         status: "Success",
+         message: "Upload gallery successfull!",
+         data: cloudinaryUrls,
+      });
+   } catch (error) {
+      next(error);
+   }
+};
+
+export const imageUploadHandler = async (req: express.Request, res: express.Response) => {
+   try {
+      const cloudinaryUrls = req.body.cloudinaryUrls;
+      if (cloudinaryUrls.length === 0) {
+         throw new ErrorException(500, "Internal Server Errror");
+      }
+      const images = cloudinaryUrls;
+      return res.send(images);
+   } catch (error) {
+      return res.status(500).json({ error });
    }
 };
