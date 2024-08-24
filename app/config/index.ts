@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 
 // Load environment variables from .env file
-// cek cloud
 dotenv.config();
 
 interface Config {
