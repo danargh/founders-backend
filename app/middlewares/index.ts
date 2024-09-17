@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction } from "express";
 // import ErrorHandler from "../utils/Error.utils";
 import config from "../config";
 import jwt from "jsonwebtoken";
@@ -115,13 +115,13 @@ export const authJwtMiddleware = async (req: UserData, res: express.Response, ne
    }
 };
 
-export const errorMiddleware = (err: ErrorException, req: express.Request, res: express.Response) => {
-   const status: number = err.status || 500;
-   const message: string = err.message || "Something went wrong";
-   const userMessage: string = err.userMessage || "Something went wrong";
-
+export const errorMiddleware = (err: Error, req: express.Request, res: express.Response, next: NextFunction) => {
    if (err instanceof ErrorException) {
+      const status: number = err.status || 500;
+      const message: string = err.message || "Something went wrong";
+      const userMessage: string = err.userMessage || "Something went wrong";
+
       logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
-      res.status(status).json({ status: "Failed", message: message, userMessage: userMessage }).end();
+      return res.status(status).json({ status: "Failed", message: message, userMessage: userMessage }).end();
    }
 };

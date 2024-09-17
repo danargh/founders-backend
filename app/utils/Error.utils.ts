@@ -8,5 +8,7 @@ export class ErrorException extends Error {
       this.status = status;
       this.message = message;
       this.userMessage = userMessage;
+
+      Object.setPrototypeOf(this, ErrorException.prototype);
    }
 }
