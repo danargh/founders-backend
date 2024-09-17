@@ -71,10 +71,12 @@ export const authJwtMiddleware = async (req: UserData, res: express.Response, ne
 
    if (!token) {
       console.log("token");
+      throw new ErrorException(401, "Unauthorized");
       return next(new ErrorException(401, "Unauthorized"));
    }
    if (!refreshToken) {
       console.log("refreshToken");
+      throw new ErrorException(401, "Unauthorized");
       return next(new ErrorException(401, "Unauthorized"));
    }
 
@@ -83,6 +85,7 @@ export const authJwtMiddleware = async (req: UserData, res: express.Response, ne
 
    const dbRefreshToken = getSessionByRefreshToken(refreshToken);
    if (!dbRefreshToken) {
+      throw new ErrorException(401, "Unauthorized");
       return next(new ErrorException(401, "Unauthorized"));
    }
 
@@ -117,6 +120,8 @@ export const errorMiddleware = (err: ErrorException, req: express.Request, res: 
    const message: string = err.message || "Something went wrong";
    const userMessage: string = err.userMessage || "Something went wrong";
 
-   logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
-   res.status(status).json({ status: "Failed", message: message, userMessage: userMessage }).end();
+   if (err instanceof ErrorException) {
+      logger.error(`[${req.method}] - ${req.path} >> StatusCode:: ${status} | Message:: ${message}`);
+      res.status(status).json({ status: "Failed", message: message, userMessage: userMessage }).end();
+   }
 };

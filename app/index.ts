@@ -34,7 +34,7 @@ app.use("/", router());
 app.use(errorMiddleware);
 
 // get user ip
-app.set("trust proxy", true);
+// app.set( true);
 
 // init swagger?
 
